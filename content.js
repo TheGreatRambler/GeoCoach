@@ -96,25 +96,24 @@ function codeToLoad() {
 								let roundsRes = await (await fetch('http://localhost:8080/rounds', {
 									body: JSON.stringify({
 										guessLat: currentGuess.lat,
-										guessLng: currentGuess.lng,
+										guessLon: currentGuess.lng,
 										guessAddress: guessReverseSearch.display_name,
-										actualLat: currentActual.lat,
-										actualLon: currentActual.lon,
-										actualAddress: actualReverseSearch.display_name,
+										roundLat: currentActual.lat,
+										roundLon: currentActual.lon,
+										roundAddress: actualReverseSearch.display_name,
 										panoramaID: currentActualPanoramaID,
 										score: currentGuess.roundScoreInPoints,
-										player: roundsData.player.id,
+										userID: roundsData.player.id,
 									}),
 									method: 'POST',
 								})).json();
 
+								console.log(roundsRes);
+
 								let pollIntervalHandle = setInterval(async () => {
-									let tipRes = await (await fetch('http://localhost:8080/tips', {
-										body: JSON.stringify({
-											id: roundsRes.ID,
-										}),
+									let tipRes = await fetch(`http://localhost:8080/tips?round_id=${roundsRes.ID}`, {
 										method: 'GET',
-									})).json();
+									});
 
 									if(tipRes.status === 200) {
 										clearInterval(pollIntervalHandle);
