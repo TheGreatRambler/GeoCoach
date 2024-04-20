@@ -1,4 +1,13 @@
 function codeToLoad() {
+    window.origFetch = window.fetch;
+
+    window.fetch = function(url, options = {}) {
+        if (url === "blah") {
+
+        }
+
+        window.origFetch(url, options);
+    }
 }
   
 function codeLoad() {
