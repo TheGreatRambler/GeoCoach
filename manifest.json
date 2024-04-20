@@ -7,12 +7,12 @@
     "content_scripts": [
         {
             "matches": [
-                "*://*.geoguessr.com/*"
+                "*://www.geoguessr.com/*"
             ],
             "js": [
                 "content.js"
             ],
-            "run_at": "document_idle"
+            "run_at": "document_start"
         }
     ],
     "icons": {
