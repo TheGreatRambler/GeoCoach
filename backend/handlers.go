@@ -17,5 +17,5 @@ func (app *App) RoundHandler(w http.ResponseWriter, r *http.Request) {
 
 // AssetsHandler handles the /assets/ route
 func (app *App) AssetsHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, r.URL.Path[1:])
+	http.ServeFile(w, r, "../"+r.URL.Path[1:])
 }
