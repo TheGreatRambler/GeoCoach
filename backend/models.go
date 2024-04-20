@@ -17,3 +17,10 @@ type Round struct {
 	Score    int     `gorm:"type:integer;not null"`
 	UserID   string  `gorm:"type:varchar(100);not null"`
 }
+
+type Tip struct {
+	gorm.Model
+	RoundID   uint   `gorm:"type:integer;not null;foreignkey:RoundID"`
+	TipString string `gorm:"type:varchar(1000);not null"`
+	UserID    string `gorm:"type:varchar(100);not null"`
+}g

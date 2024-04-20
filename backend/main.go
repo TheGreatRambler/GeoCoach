@@ -15,6 +15,7 @@ func main() {
 	}
 
 	db.AutoMigrate(&Round{})
+	db.AutoMigrate(&Tip{})
 
 	app := &App{DB: db}
 
