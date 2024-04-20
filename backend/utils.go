@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"log"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
+	"gorm.io/gorm"
 )
 
 func (app *App) CreateRound(w http.ResponseWriter, r *http.Request) int {
@@ -115,4 +117,26 @@ func (app *App) CorsAndPreflightHandler(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(http.StatusOK)
 		return
 	}
+}
+
+func (app *App) GetTips(w http.ResponseWriter, r *http.Request) {
+	println("GETTING THE TIPS")
+	id := r.URL.Query().Get("round_id")
+
+	tip := &Tip{}
+	result := app.DB.Where("RoundID = ?", id).First(&tip)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			w.WriteHeader(http.StatusNotFound) // Set HTTP status to 404
+			json.NewEncoder(w).Encode(map[string]string{"error": "Tip not found"})
+			return
+		}
+
+		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tip)
 }

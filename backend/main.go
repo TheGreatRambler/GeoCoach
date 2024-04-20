@@ -27,6 +27,7 @@ func main() {
 	app := &App{DB: db}
 
 	http.HandleFunc("/rounds", app.RoundHandler)
+	http.HandleFunc("/tips", app.TipsHander)
 	http.HandleFunc("/assets/", app.AssetsHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

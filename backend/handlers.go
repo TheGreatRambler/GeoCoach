@@ -15,6 +15,19 @@ func (app *App) RoundHandler(w http.ResponseWriter, r *http.Request) {
 		if id != -1 {
 			go app.GenerateTip(uint(id))
 		}
+
+		// return json id: id
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *App) TipsHander(w http.ResponseWriter, r *http.Request) {
+	app.CorsAndPreflightHandler(w, r)
+	switch r.Method {
+	case http.MethodGet:
+		app.GetTips(w, r)
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
