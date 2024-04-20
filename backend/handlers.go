@@ -15,9 +15,8 @@ func (app *App) RoundHandler(w http.ResponseWriter, r *http.Request) {
 		if id != -1 {
 			go app.GenerateTip(uint(id))
 		}
-
-		// return json id: id
-
+	case http.MethodGet:
+		app.GetRounds(w, r)
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}

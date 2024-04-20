@@ -43,6 +43,27 @@ func (app *App) CreateRound(w http.ResponseWriter, r *http.Request) int {
 	return int(round.ID)
 }
 
+func (app *App) GetRounds(w http.ResponseWriter, r *http.Request) {
+	rounds := []Round{}
+	var result *gorm.DB
+	user_id := r.URL.Query().Get("user_id")
+
+	if user_id != "" {
+		result = app.DB.Where("user_id = ?", user_id).Find(&rounds)
+	} else {
+		result = app.DB.Find(&rounds)
+	}
+
+	if result.Error != nil {
+		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(rounds)
+
+}
+
 func downloadImageToBytes(url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
