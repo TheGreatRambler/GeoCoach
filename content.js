@@ -44,10 +44,18 @@ function codeToLoad() {
 								container.style.justifyContent = 'flex-start';
 								container.style.flexDirection  = 'column';
 
+								let coachContainer                  = document.createElement('div');
+								coachContainer.style.display        = 'flex';
+								coachContainer.style.justifyContent = 'flex-start';
+								coachContainer.style.flexDirection  = 'row';
+
 								let img          = document.createElement('img');
 								img.src          = 'http://localhost:8080/assets/owlmouthclosed.png';
 								img.style.width  = '200px';
 								img.style.height = '200px';
+
+								let tipElement          = document.createElement('h3');
+								tipElement.style.margin = "20px";
 
 								setInterval(() => {
 									if(img.src.endsWith('owlmouthclosed.png')) {
@@ -60,7 +68,9 @@ function codeToLoad() {
 								// resultsContainer.firstElementChild.remove();
 								resultsContainer.firstElementChild.style.background = '';
 
-								container.appendChild(img);
+								coachContainer.appendChild(img);
+								coachContainer.appendChild(tipElement);
+								container.appendChild(coachContainer);
 								container.appendChild(resultsContainer.firstElementChild);
 
 								console.log(container);
@@ -81,22 +91,24 @@ function codeToLoad() {
 										  .json();
 								console.log(guessReverseSearch.display_name, actualReverseSearch.display_name,
 									currentActualPanoramaID);
-								console.log(roundsData)
+								console.log(roundsData);
 
-									await fetch('http://localhost:8080/rounds', {
-										body: JSON.stringify({
-											guessLat: currentGuess.lat,
-											guessLng: currentGuess.lng,
-											guessAddress: guessReverseSearch.display_name,
-											actualLat: currentActual.lat,
-											actualLon: currentActual.lon,
-											actualAddress: actualReverseSearch.display_name,
-											panoramaID: currentActualPanoramaID,
-											score: currentGuess.roundScoreInPoints,
-											player: roundsData.player.id,
-										}),
-										method: 'POST',
-									});
+								let tipData = await (await fetch('http://localhost:8080/rounds', {
+									body: JSON.stringify({
+										guessLat: currentGuess.lat,
+										guessLng: currentGuess.lng,
+										guessAddress: guessReverseSearch.display_name,
+										actualLat: currentActual.lat,
+										actualLon: currentActual.lon,
+										actualAddress: actualReverseSearch.display_name,
+										panoramaID: currentActualPanoramaID,
+										score: currentGuess.roundScoreInPoints,
+										player: roundsData.player.id,
+									}),
+									method: 'POST',
+								})).json();
+
+								tipElement.innerHTML = tipData.tip;
 							}
 						}, 100);
 					});
