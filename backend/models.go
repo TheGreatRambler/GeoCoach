@@ -16,6 +16,8 @@ type Round struct {
 	GuessLon float64 `gorm:"type:decimal(11,8);not null"`
 	Score    int     `gorm:"type:integer;not null"`
 	UserID   string  `gorm:"type:varchar(100);not null"`
+	Address string  `gorm:"type:varchar(1000);not null"`
+	PanoramaID string `gorm:"type:varchar(100);not null"`
 }
 
 type Tip struct {
