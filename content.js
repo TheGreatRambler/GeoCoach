@@ -103,7 +103,7 @@ function codeLoad() {
     var script = document.createElement('script');
     script.type = 'text/javascript';
     script.id = 'GeoCoachScript';
-    var code = codeToLoad.toString() + 'codeToLoad();';
+    var code = 'const inline = 1;' + codeToLoad.toString() + 'codeToLoad();';
     script.appendChild(document.createTextNode(code));
 
     var container = document.head || document.documentElement
