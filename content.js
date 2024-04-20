@@ -64,7 +64,7 @@ function codeToLoad() {
                                 console.log(guessReverseSearch.display_name, actualReverseSearch.display_name, currentActualPanoramaID);
                                 console.log(roundsData)
 
-                                await fetch("http://localhost:8080/something", {
+                                await fetch("http://localhost:8080/rounds", {
                                     body: JSON.stringify({
                                         guessLat: currentGuess.lat,
                                         guessLng: currentGuess.lng,
