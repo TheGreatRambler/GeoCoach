@@ -17,16 +17,40 @@ function codeToLoad() {
                         console.log(roundsData.player.guesses, roundsData.rounds);
 
                         setTimeout(() => {
-                            console.log(window.document);
-
                             let resultsContainer = document.querySelector('div[class*="result-layout_bottom"]');
 
                             if (resultsContainer) {
+                                resultsContainer.style.maxHeight = "350px";
+                                resultsContainer.style.background = "linear-gradient(180deg,var(--ds-color-purple-100) 0%,var(--ds-color-black) 100%)";
+
+                                let container = document.createElement("div");
+                                container.style.display = "flex";
+                                container.style.justifyContent = "flex-start";
+                                container.style.flexDirection = "column";
+
                                 let img = document.createElement("img");
-                                img.src = browser.runtime.getURL("assets/owlmouthclosed.png");
-                                resultsContainer.insertBefore(img, resultsContainer.children[0]);
+                                img.src = "http://localhost:8080/assets/owlmouthclosed.png";
+                                img.style.width = "200px";
+                                img.style.height = "200px";
+
+                                setInterval(() => {
+                                    if (img.src.endsWith("owlmouthclosed.png")) {
+                                        img.src = "http://localhost:8080/assets/owlmouthopen.png";
+                                    } else {
+                                        img.src = "http://localhost:8080/assets/owlmouthclosed.png";
+                                    }
+                                }, 500);
+
+                                //resultsContainer.firstElementChild.remove();
+                                resultsContainer.firstElementChild.style.background = "";
+
+                                container.appendChild(img);
+                                container.appendChild(resultsContainer.firstElementChild);
+
+                                console.log(container);
+                                resultsContainer.appendChild(container);
                             }
-                        }, 200);
+                        }, 0);
                     });
                 }
 
