@@ -62,6 +62,7 @@ function codeToLoad() {
                                 let guessReverseSearch = await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentGuess.lat}&lon=${currentGuess.lng}`)).json();
                                 let actualReverseSearch = await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentActual.lat}&lon=${currentActual.lng}`)).json();
                                 console.log(guessReverseSearch.display_name, actualReverseSearch.display_name, currentActualPanoramaID);
+                                console.log(roundsData)
 
                                 await fetch("http://localhost:8080/something", {
                                     body: JSON.stringify({
@@ -73,6 +74,7 @@ function codeToLoad() {
                                         actualAddress: actualReverseSearch,
                                         panoramaID: currentActualPanoramaID,
                                         score: currentGuess.roundScoreInPoints,
+                                        player: roundsData.player.id,
                                     }),
                                     method: "POST",
                                 });
