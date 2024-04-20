@@ -87,10 +87,10 @@ function codeToLoad() {
 										body: JSON.stringify({
 											guessLat: currentGuess.lat,
 											guessLng: currentGuess.lng,
-											guessAddress: guessReverseSearch,
+											guessAddress: guessReverseSearch.display_name,
 											actualLat: currentActual.lat,
 											actualLon: currentActual.lon,
-											actualAddress: actualReverseSearch,
+											actualAddress: actualReverseSearch.display_name,
 											panoramaID: currentActualPanoramaID,
 											score: currentGuess.roundScoreInPoints,
 											player: roundsData.player.id,
