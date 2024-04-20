@@ -1,4 +1,7 @@
 function codeToLoad() {
+	window.origFetch = window.fetch;
+	let myChart;
+
 	function hexToAscii(hexString) {
 		let asciiString = '';
 		for(let i = 0; i < hexString.length; i += 2) {
@@ -7,6 +10,39 @@ function codeToLoad() {
 		}
 		return asciiString;
 	}
+
+	async function fetchData() {
+		const response = await window.origFetch('http://localhost:8080/rounds');
+		const rounds = await response.json();
+		return rounds.map(round => round.Score);
+	}
+
+	async function createChart() {
+		const scores = await fetchData();
+		const ctx = document.getElementById('scoreChart');
+		if (myChart) {
+			myChart.destroy();
+		}
+		myChart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: scores.map((_, index) => `Round ${index + 1}`),
+				datasets: [{
+					label: 'Scores',
+					data: scores,
+					borderColor: 'rgb(75, 192, 192)',
+					tension: 0.1
+				}]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				}
+			}
+		});
+	}	
 
 	const onPageLoad = () => {
 		if (document.querySelector("div[class*='primary-menu_wrapper__3ahEU']") == null) {
@@ -29,8 +65,8 @@ function codeToLoad() {
 			dialog.style.position = "absolute";	
 			dialog.style.top = "0";
 			dialog.style.left = "0";
-			dialog.style.backgroundColor = "rgba(0,0,0,0.5)";
-			dialog.style.backdropFilter = 'blur(10px)';
+			dialog.style.backgroundColor = "rgba(16,16,28,0.6)";
+			dialog.style.backdropFilter = 'blur(15px)';
 
 			let dialogContent = document.createElement("div");
 			dialogContent.style.width = "50%";
@@ -64,12 +100,34 @@ function codeToLoad() {
 			closeButton.style.fontFamily = "neo-sans,sans-serif";
 			closeButton.style.fontWeight = "700";
 			closeButton.style.fontStyle = "italic";
+			closeButton.style.left = "50%";
+			closeButton.style.bottom = "0";
+			closeButton.style.margin = "0";
+			closeButton.style.transform = "translateX(-50%)";
+
+			let divChartContainer = document.createElement("div");
+			divChartContainer.style.width = "100%";
+			divChartContainer.style.height = "80%";
+			divChartContainer.style.display = "flex";
+			divChartContainer.style.flexDirection = "column";
+			divChartContainer.style.justifyContent = "center";
+			divChartContainer.style.alignItems = "center";
+
+			let canvas = document.createElement("canvas");
+			canvas.id = "scoreChart";
+			canvas.style.width = "100%";
+			canvas.style.height = "80%";
+			canvas.style.maxWidth = "600px";
+			canvas.style.maxHeight = "600px";
+
+			divChartContainer.appendChild(canvas);
 			
 			closeButton.onclick = function() {
 				dialog.close();
 			}
 
 			dialogContent.appendChild(dialogTitle);
+			dialogContent.appendChild(divChartContainer);
 			dialogContent.appendChild(closeButton);
 			dialog.appendChild(dialogContent);
 
@@ -78,6 +136,7 @@ function codeToLoad() {
 			let button = document.querySelector("div[class*='geocoach-item'] button");
 			button.onclick = function() {
 				dialog.showModal();
+				createChart();			  
 			}
 			
 		}
@@ -92,8 +151,6 @@ function codeToLoad() {
 			onPageLoad();
 		}
 	}, 500);
-
-	window.origFetch = window.fetch;
 
 	window.fetch = function(url, options = {}) {
 		return new Promise((res, rej) => {
@@ -210,13 +267,20 @@ function codeToLoad() {
 }
 
 function codeLoad() {
+	var container = document.head || document.documentElement
+
+	var lscript = document.createElement('script');
+	lscript.type = 'text/javascript';
+	lscript.src = "https://cdn.jsdelivr.net/npm/chart.js";
+	lscript.id = 'ChartJSScript';
+	container.insertBefore(lscript, container.children[0]);
+
 	var script  = document.createElement('script');
 	script.type = 'text/javascript';
 	script.id   = 'GeoCoachScript';
 	var code    = 'const inline = 1;' + codeToLoad.toString() + 'codeToLoad();';
 	script.appendChild(document.createTextNode(code));
 
-	var container = document.head || document.documentElement
 	container.insertBefore(script, container.children[0]);
 }
 
