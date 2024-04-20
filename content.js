@@ -3,11 +3,23 @@ function codeToLoad() {
 
     window.fetch = function(url, options = {}) {
         return new Promise((res, rej) => {
-            if (url.startsWith && url.startsWith("https://www.geoguessr.com/api/v3/games")) {
-                console.log(options);
+            let isGamesPost = false;
+            let submissionData = null;
+
+            if (url.startsWith && url.startsWith("https://www.geoguessr.com/api/v3/games") && options.method === "POST") {
+                isGamesPost = true;
+                submissionData = JSON.parse(options.body);
             }
     
-            window.origFetch(url, options).then(obj => res(obj));
+            window.origFetch(url, options).then(response => {
+                if (isGamesPost) {
+                    response.clone().json().then(roundsData => {
+                        console.log(roundsData.player.guesses, roundsData.rounds);
+                    });
+                }
+
+                res(response);
+            });
         })
     }
 }
