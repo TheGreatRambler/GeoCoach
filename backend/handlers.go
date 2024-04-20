@@ -10,7 +10,11 @@ func (app *App) RoundHandler(w http.ResponseWriter, r *http.Request) {
 	app.CorsAndPreflightHandler(w, r)
 	switch r.Method {
 	case http.MethodPost:
-		app.CreateRound(w, r)
+		id := app.CreateRound(w, r)
+		println("ID: ", id)
+		if id != -1 {
+			go app.GenerateTip(uint(id))
+		}
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
