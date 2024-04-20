@@ -8,6 +8,91 @@ function codeToLoad() {
 		return asciiString;
 	}
 
+	const onPageLoad = () => {
+		if (document.querySelector("div[class*='primary-menu_wrapper__3ahEU']") == null) {
+			setTimeout(onPageLoad, 50);
+		}else {
+			if (document.querySelector("div[class*='geocoach-item']") != null) {
+				return;
+			}
+			let menu = document.querySelector("div[class*='primary-menu_wrapper__3ahEU']")
+			var clone = menu.children[7].cloneNode(true);
+			clone.classList.add("geocoach-item");
+			menu.insertBefore(clone, menu.children[8]);
+			let span = document.querySelector("div[class*='geocoach-item'] span");
+			span.innerHTML = "GeoCoach";
+
+			let dialog = document.createElement("dialog");
+			dialog.classList.add("geocoach-dialog");
+			dialog.style.width = "100%";
+			dialog.style.height = "100%";
+			dialog.style.position = "absolute";	
+			dialog.style.top = "0";
+			dialog.style.left = "0";
+			dialog.style.backgroundColor = "rgba(0,0,0,0.5)";
+			dialog.style.backdropFilter = 'blur(10px)';
+
+			let dialogContent = document.createElement("div");
+			dialogContent.style.width = "50%";
+			dialogContent.style.height = "50%";
+			dialogContent.style.position = "absolute";
+			dialogContent.style.top = "25%";
+			dialogContent.style.left = "25%";
+			dialogContent.style.borderRadius = "10px";
+			dialogContent.style.padding = "20px";
+
+			let dialogTitle = document.createElement("h1");
+			dialogTitle.innerHTML = "GeoCoach";
+			dialogTitle.style.color = "white";
+			dialogTitle.style.textAlign = "center";
+			dialogTitle.style.fontStyle = "italic";
+			dialogTitle.style.fontWeight = "700";
+			dialogTitle.style.fontFamily = "neo-sans,sans-serif";
+			dialogTitle.style.fontSize = "1.75rem";
+
+			let closeButton = document.createElement("button");
+			closeButton.innerHTML = "CLOSE";
+			closeButton.style.color = "white";
+			closeButton.style.position = "absolute";
+			closeButton.style.backgroundColor = "transparent";
+			closeButton.style.border = "none";
+			closeButton.style.fontSize = "0.875rem";
+			closeButton.style.cursor = "pointer";
+			closeButton.style.background = "hsla(0,0%,100%,.2)";
+			closeButton.style.borderRadius = "3.75rem";
+			closeButton.style.padding = "0.75rem 1.5rem";
+			closeButton.style.fontFamily = "neo-sans,sans-serif";
+			closeButton.style.fontWeight = "700";
+			closeButton.style.fontStyle = "italic";
+			
+			closeButton.onclick = function() {
+				dialog.close();
+			}
+
+			dialogContent.appendChild(dialogTitle);
+			dialogContent.appendChild(closeButton);
+			dialog.appendChild(dialogContent);
+
+			document.body.appendChild(dialog);
+
+			let button = document.querySelector("div[class*='geocoach-item'] button");
+			button.onclick = function() {
+				dialog.showModal();
+			}
+			
+		}
+	}
+
+	if (window.location.href == "https://www.geoguessr.com/") {		
+		onPageLoad();
+	} 
+
+	setInterval(() => {
+		if (window.location.href == "https://www.geoguessr.com/") {
+			onPageLoad();
+		}
+	}, 500);
+
 	window.origFetch = window.fetch;
 
 	window.fetch = function(url, options = {}) {
@@ -134,7 +219,6 @@ function codeToLoad() {
 }
 
 function codeLoad() {
-	// Add script element to bypass firefox content script limitations
 	var script  = document.createElement('script');
 	script.type = 'text/javascript';
 	script.id   = 'GeoCoachScript';
