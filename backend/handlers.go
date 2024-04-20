@@ -11,7 +11,6 @@ func (app *App) RoundHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		id := app.CreateRound(w, r)
-		println("ID: ", id)
 		if id != -1 {
 			go app.GenerateTip(uint(id))
 		}

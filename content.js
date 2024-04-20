@@ -114,8 +114,6 @@ function codeToLoad() {
 			window.origFetch(url, options).then(response => {
 				if(isGamesPost) {
 					response.clone().json().then((roundsData) => {
-						console.log(roundsData.player.guesses, roundsData.rounds);
-
 						setTimeout(async () => {
 							let resultsContainer = document.querySelector('div[class*="result-layout_bottom"]');
 
@@ -159,10 +157,8 @@ function codeToLoad() {
 								container.appendChild(coachContainer);
 								container.appendChild(resultsContainer.firstElementChild);
 
-								console.log(container);
 								resultsContainer.appendChild(container);
 
-								// https://nominatim.openstreetmap.org/reverse?format=json&lat=32.7762719&lon=-96.7968559
 								let currentGuess  = roundsData.player.guesses[roundsData.player.guesses.length - 1];
 								let currentActual = roundsData.rounds[roundsData.rounds.length - 1];
 								let currentActualPanoramaID = hexToAscii(currentActual.panoId);
@@ -175,9 +171,6 @@ function codeToLoad() {
 									= await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${
 												 currentActual.lat}&lon=${currentActual.lng}`))
 										  .json();
-								console.log(guessReverseSearch.display_name, actualReverseSearch.display_name,
-									currentActualPanoramaID);
-								console.log(roundsData);
 
 								let roundsRes = await (await fetch('http://localhost:8080/rounds', {
 									body: JSON.stringify({
@@ -193,8 +186,6 @@ function codeToLoad() {
 									}),
 									method: 'POST',
 								})).json();
-
-								console.log(roundsRes);
 
 								let pollIntervalHandle = setInterval(async () => {
 									let tipRes = await fetch(`http://localhost:8080/tips?round_id=${roundsRes.ID}`, {

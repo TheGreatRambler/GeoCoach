@@ -2,18 +2,14 @@ package main
 
 import (
 	"bytes"
-	"context"
 	_ "embed"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"os"
+	"strings"
 
-	"github.com/google/generative-ai-go/genai"
-	"google.golang.org/api/option"
 	"gorm.io/gorm"
 )
 
@@ -64,8 +60,9 @@ func (app *App) GetRounds(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func downloadImageToBytes(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+func downloadUrl(req *http.Request) ([]byte, error) {
+	client := http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -79,57 +76,6 @@ func downloadImageToBytes(url string) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (app *App) GenerateTip(roundID uint) {
-	println("MAKING TIP!")
-
-	round := &Round{}
-	app.DB.First(&round, roundID)
-
-	ctx := context.Background()
-	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("GEMINI_API_KEY")))
-	if err != nil {
-		log.Fatalf("genai.NewClient: %v", err)
-		return
-	}
-	defer client.Close()
-
-	model := client.GenerativeModel("gemini-pro")
-
-	// generate tip
-	prompt := []genai.Part{}
-
-	guess_address := round.GuessAddress
-	actual_address := round.RoundAddress
-
-	prompt_text := fmt.Sprintf(prompt_text_format, guess_address, actual_address)
-
-	prompt = append(prompt, genai.Text(prompt_text))
-
-	output, err := model.GenerateContent(ctx, prompt...)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tip := output.Candidates[len(output.Candidates)-1].Content.Parts[len(output.Candidates[len(output.Candidates)-1].Content.Parts)-1]
-	text, ok := tip.(genai.Text)
-	if !ok {
-		log.Fatal("Expected tip to be text")
-	}
-
-	result := app.DB.Create(&Tip{
-		RoundID:   roundID,
-		TipString: string(text),
-		UserID:    round.UserID,
-	})
-
-	if result.Error != nil {
-		log.Fatal(result.Error)
-	}
-
-	println("TIP GENERATED!")
-}
-
 func (app *App) CorsAndPreflightHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -141,26 +87,26 @@ func (app *App) CorsAndPreflightHandler(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (app *App) GetTips(w http.ResponseWriter, r *http.Request) {
-	println("GETTING THE TIPS")
-	id := r.URL.Query().Get("round_id")
-
-	tip := &Tip{}
-	result := app.DB.Where("round_id = ?", id).First(&tip)
-
-	println("TIP: ", tip)
-
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			w.WriteHeader(http.StatusNotFound) // Set HTTP status to 404
-			json.NewEncoder(w).Encode(map[string]string{"error": "Tip not found"})
-			return
-		}
-
-		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
-		return
+func getGoogleMapsClientID() (string, error) {
+	req, _ := http.NewRequest("GET", "https://www.google.com/maps", nil)
+	homepage, err := downloadUrl(req)
+	if err != nil {
+		log.Fatalf("genai.NewClient: %v", err)
+		return "", err
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(tip)
+	findStr := "\"],null,0,\""
+	startID := strings.Index(string(homepage), findStr)
+	if startID == -1 {
+		return "", fmt.Errorf("Could not find Google Maps client ID")
+	}
+
+	endQuote := strings.Index(string(homepage)[startID+len(findStr):], "\"")
+	if endQuote == -1 {
+		return "", fmt.Errorf("Could not find Google Maps client ID")
+	}
+
+	endQuote += startID + len(findStr)
+
+	return string(homepage)[startID+len(findStr) : endQuote], nil
 }
