@@ -19,7 +19,7 @@ func main() {
 
 	app := &App{DB: db}
 
-	http.HandleFunc("/round", app.RoundHandler)
+	http.HandleFunc("/rounds", app.RoundHandler)
 	http.HandleFunc("/assets/", app.AssetsHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

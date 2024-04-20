@@ -61,7 +61,7 @@ func (app *App) GenerateTip(roundID uint, urls []string) {
 	}
 	defer client.Close()
 
-	model := client.GenerativeModel("gemini-pro-vision")
+	// model := client.GenerativeModel("gemini-pro-vision")
 
 	// download images
 	var wg sync.WaitGroup
@@ -94,16 +94,16 @@ func (app *App) GenerateTip(roundID uint, urls []string) {
 
 	prompt = append(prompt, genai.Text("Generate a tip for this location."))
 
-	output, err := model.GenerateContent(ctx, prompt...)
+	// output, err := model.GenerateContent(ctx, prompt...)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Save the tip in the database
-	app.DB.Create(&Tip{
-		RoundID:   roundID,
-		TipString: output.Text,
-		UserID:    round.UserID,
-	})
+	// // Save the tip in the database
+	// app.DB.Create(&Tip{
+	// 	RoundID:   roundID,
+	// 	TipString: output,
+	// 	UserID:    round.UserID,
+	// })
 }
