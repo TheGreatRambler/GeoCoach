@@ -7,6 +7,7 @@ import (
 
 // RoundHandler handles the /round route
 func (app *App) RoundHandler(w http.ResponseWriter, r *http.Request) {
+	app.CorsAndPreflightHandler(w, r)
 	switch r.Method {
 	case http.MethodPost:
 		app.CreateRound(w, r)
@@ -17,5 +18,6 @@ func (app *App) RoundHandler(w http.ResponseWriter, r *http.Request) {
 
 // AssetsHandler handles the /assets/ route
 func (app *App) AssetsHandler(w http.ResponseWriter, r *http.Request) {
+	app.CorsAndPreflightHandler(w, r)
 	http.ServeFile(w, r, "../"+r.URL.Path[1:])
 }
