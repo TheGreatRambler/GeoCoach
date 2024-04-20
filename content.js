@@ -1,5 +1,5 @@
 function codeToLoad() {
-  }
+}
   
 function codeLoad() {
     // Add script element to bypass firefox content script limitations
