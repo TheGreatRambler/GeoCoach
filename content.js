@@ -54,8 +54,9 @@ function codeToLoad() {
 								img.style.width  = '200px';
 								img.style.height = '200px';
 
-								let tipElement          = document.createElement('h3');
-								tipElement.style.margin = "20px";
+								let tipElement               = document.createElement('h3');
+								tipElement.style.margin      = "auto";
+								tipElement.style.marginRight = "25px";
 
 								setInterval(() => {
 									if(img.src.endsWith('owlmouthclosed.png')) {
