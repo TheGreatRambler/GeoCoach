@@ -15,6 +15,18 @@ function codeToLoad() {
                 if (isGamesPost) {
                     response.clone().json().then(roundsData => {
                         console.log(roundsData.player.guesses, roundsData.rounds);
+
+                        setTimeout(() => {
+                            console.log(window.document);
+
+                            let resultsContainer = document.querySelector('div[class*="result-layout_bottom"]');
+
+                            if (resultsContainer) {
+                                let img = document.createElement("img");
+                                img.src = browser.runtime.getURL("assets/owlmouthclosed.png");
+                                resultsContainer.insertBefore(img, resultsContainer.children[0]);
+                            }
+                        }, 200);
                     });
                 }
 
@@ -33,7 +45,7 @@ function codeLoad() {
     script.appendChild(document.createTextNode(code));
 
     var container = document.head || document.documentElement
-    container.insertBefore(script, container.children[0])
+    container.insertBefore(script, container.children[0]);
 }
   
 codeLoad();
