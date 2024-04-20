@@ -16,7 +16,7 @@ function codeToLoad() {
                     response.clone().json().then(roundsData => {
                         console.log(roundsData.player.guesses, roundsData.rounds);
 
-                        setTimeout(() => {
+                        setTimeout(async () => {
                             let resultsContainer = document.querySelector('div[class*="result-layout_bottom"]');
 
                             if (resultsContainer) {
@@ -40,6 +40,14 @@ function codeToLoad() {
                                         img.src = "http://localhost:8080/assets/owlmouthclosed.png";
                                     }
                                 }, 500);
+
+                                // https://nominatim.openstreetmap.org/reverse?format=json&lat=32.7762719&lon=-96.7968559
+                                let currentGuess = roundsData.player.guesses[roundsData.player.guesses.length - 1];
+                                let currentActual = roundsData.rounds[roundsData.rounds.length - 1];
+
+                                let guessReverseSearch = await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentGuess.lat}&lon=${currentGuess.lng}`)).json();
+                                let actualReverseSearch = await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentActual.lat}&lon=${currentActual.lng}`)).json();
+                                console.log(guessReverseSearch.display_name, actualReverseSearch.display_name);
 
                                 //resultsContainer.firstElementChild.remove();
                                 resultsContainer.firstElementChild.style.background = "";
