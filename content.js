@@ -93,7 +93,7 @@ function codeToLoad() {
 									currentActualPanoramaID);
 								console.log(roundsData);
 
-								let tipData = await (await fetch('http://localhost:8080/rounds', {
+								let roundsRes = await (await fetch('http://localhost:8080/rounds', {
 									body: JSON.stringify({
 										guessLat: currentGuess.lat,
 										guessLng: currentGuess.lng,
@@ -108,7 +108,20 @@ function codeToLoad() {
 									method: 'POST',
 								})).json();
 
-								tipElement.innerHTML = tipData.tip;
+								let pollIntervalHandle = setInterval(async () => {
+									let tipRes = await (await fetch('http://localhost:8080/tips', {
+										body: JSON.stringify({
+											id: roundsRes.ID,
+										}),
+										method: 'GET',
+									})).json();
+
+									if(tipRes.status === 200) {
+										clearInterval(pollIntervalHandle);
+										let tipData          = await tipRes.json();
+										tipElement.innerHTML = tipData.tip;
+									}
+								}, 1000);
 							}
 						}, 100);
 					});
