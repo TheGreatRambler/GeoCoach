@@ -94,15 +94,16 @@ func (app *App) GenerateTip(roundID uint) {
 	}
 
 	tip := output.Candidates[len(output.Candidates)-1].Content.Parts[len(output.Candidates[len(output.Candidates)-1].Content.Parts)-1]
+	text, ok := tip.(*genai.Text)
+	if !ok {
+		log.Fatal("Expected tip to be text")
+	}
 
-	println(tip)
-
-	// // Save the tip in the database
-	// app.DB.Create(&Tip{
-	// 	RoundID:   roundID,
-	// 	TipString: tip,
-	// 	UserID:    round.UserID,
-	// })
+	app.DB.Create(&Tip{
+		RoundID:   roundID,
+		TipString: string(*text),
+		UserID:    round.UserID,
+	})
 }
 
 func (app *App) CorsAndPreflightHandler(w http.ResponseWriter, r *http.Request) {
