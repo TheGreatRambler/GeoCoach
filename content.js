@@ -118,7 +118,7 @@ function codeToLoad() {
 									if(tipRes.status === 200) {
 										clearInterval(pollIntervalHandle);
 										let tipData          = await tipRes.json();
-										tipElement.innerHTML = tipData.tip;
+										tipElement.innerHTML = tipData.TipString;
 									}
 								}, 1000);
 							}

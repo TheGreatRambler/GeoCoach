@@ -3,8 +3,10 @@ package main
 import (
 	"bytes"
 	"context"
+	_ "embed"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -14,6 +16,9 @@ import (
 	"google.golang.org/api/option"
 	"gorm.io/gorm"
 )
+
+//go:embed tip_prompt.txt
+var prompt_text_format string
 
 func (app *App) CreateRound(w http.ResponseWriter, r *http.Request) int {
 	var round Round
@@ -75,17 +80,7 @@ func (app *App) GenerateTip(roundID uint) {
 	guess_address := round.GuessAddress
 	actual_address := round.RoundAddress
 
-	prompt_text := "Can you explain to me how someone who is looking at images would confuse " +
-		guess_address + ", which someone has incorrectly guessed, for " + actual_address +
-		", which is what they should have guessed, and how they would differentiate them." +
-		" Please answer in 3 sentences or less and give highly specific directions " +
-		"regarding the actual locations mentioned. Consider that this person is likely" +
-		" looking at images taken from a moving car and try to mention differences" +
-		" in places that would be visible from roads. Provide an even mix of indicators " +
-		"to identify the locations. Do not provide any excuses for your answers, simply get to" +
-		" the point and answer the question. If you reference an uncommon word or term define it" +
-		" clearly. Speak personally as if you are trying to teach someone how to identify the" +
-		" second location."
+	prompt_text := fmt.Sprintf(prompt_text_format, guess_address, actual_address)
 
 	prompt = append(prompt, genai.Text(prompt_text))
 
