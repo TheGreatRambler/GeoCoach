@@ -41,8 +41,6 @@ function codeToLoad() {
 	async function createChart() {
 		const temp = await fetchData();
 
-		console.log("DROPDOWN", dropDown.value, temp);
-
 		const reverse    = temp.reverse();
 		const rev_scores = parseInt(dropDown.value) === -1 ? reverse : reverse.slice(0, parseInt(dropDown.value));
 		const scores     = rev_scores.reverse();
@@ -113,6 +111,10 @@ function codeToLoad() {
 			dialogContent.style.left = "15%";
 			dialogContent.style.borderRadius = "10px";
 			dialogContent.style.padding = "20px";
+			dialogContent.style.display = "flex";
+			dialogContent.style.justifyContent = "center";
+			dialogContent.style.flexDirection = "column";
+
 
 			let dialogTitle = document.createElement("h1");
 			dialogTitle.innerHTML = "GeoCoach";
@@ -126,7 +128,6 @@ function codeToLoad() {
 			let closeButton = document.createElement("button");
 			closeButton.innerHTML = "CLOSE";
 			closeButton.style.color = "white";
-			closeButton.style.position = "absolute";
 			closeButton.style.backgroundColor = "transparent";
 			closeButton.style.border = "none";
 			closeButton.style.fontSize = "0.875rem";
@@ -137,10 +138,9 @@ function codeToLoad() {
 			closeButton.style.fontFamily = "neo-sans,sans-serif";
 			closeButton.style.fontWeight = "700";
 			closeButton.style.fontStyle = "italic";
-			closeButton.style.left = "50%";
 			closeButton.style.bottom = "0";
-			closeButton.style.margin = "0";
-			closeButton.style.transform = "translateX(-50%)";
+			closeButton.style.marginLeft = "auto";
+			closeButton.style.marginRight = "auto";
 
 			let divChartContainer = document.createElement("div");
 			divChartContainer.style.width = "100%";
@@ -214,6 +214,7 @@ function codeToLoad() {
 			divStats.style.flexDirection = "row";
 			divStats.style.justifyContent = "space-around";
 			divStats.style.alignItems = "center";
+			divStats.style.margin = "10px";
 
 			divStats.appendChild(avgLabel);
 			divStats.appendChild(avgSpan);
