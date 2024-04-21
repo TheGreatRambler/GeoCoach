@@ -130,6 +130,10 @@ func DownloadPanoramaFromLocation(lat float64, lon float64) (*bytes.Buffer, erro
 		return nil, err
 	}
 
+	if len(panoramaList) == 0 {
+		return nil, nil
+	}
+
 	var panorama_id string
 	for _, pano := range panoramaList[0].([]interface{}) {
 		switch items := pano.(type) {
