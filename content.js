@@ -344,10 +344,10 @@ function codeToLoad() {
 								tipElement.style.marginRight = "25px";
 
 								setInterval(() => {
-									if(img.src.endsWith('owlmouthclosed.png')) {
+									if(img.src.endsWith('owlmouthnod.png')) {
 										img.src = 'http://localhost:8080/assets/owlmouthopen.png';
 									} else {
-										img.src = 'http://localhost:8080/assets/owlmouthclosed.png';
+										img.src = 'http://localhost:8080/assets/owlmouthnod.png';
 									}
 								}, 500);
 
