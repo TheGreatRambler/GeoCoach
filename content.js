@@ -1,10 +1,10 @@
 function codeToLoad() {
 	window.origFetch = window.fetch;
-	let myChart;
-	let dropDown = document.createElement("select");
-	let avgSpan = document.createElement("span");
-	let medianSpan = document.createElement("span");
-	let modeSpan = document.createElement("span");
+	let myChart      = null;
+	let dropDown     = document.createElement("select");
+	let avgSpan      = document.createElement("span");
+	let medianSpan   = document.createElement("span");
+	let modeSpan     = document.createElement("span");
 
 	function hexToAscii(hexString) {
 		let asciiString = '';
@@ -17,77 +17,74 @@ function codeToLoad() {
 
 	async function fetchData() {
 		const response = await window.origFetch('http://localhost:8080/rounds');
-		const rounds = await response.json();
+		const rounds   = await response.json();
 		return rounds.map(round => round.Score);
 	}
 
 	async function fetchStats(scores) {
-		const sum = scores.reduce((a, b) => a + b, 0);
-		const avg = sum / scores.length;
+		const sum         = scores.reduce((a, b) => a + b, 0);
+		const avg         = sum / scores.length;
 		avgSpan.innerHTML = `${avg.toFixed(2)}`;
 
-		const sortedScores = scores.slice().sort((a, b) => a - b);
-		const middle = Math.floor(sortedScores.length / 2);
-		const isEven = sortedScores.length % 2 === 0;
-		const median = isEven ? (sortedScores[middle - 1] + sortedScores[middle]) / 2 : sortedScores[middle];
+		const sortedScores   = scores.slice().sort((a, b) => a - b);
+		const middle         = Math.floor(sortedScores.length / 2);
+		const isEven         = sortedScores.length % 2 === 0;
+		const median         = isEven ? (sortedScores[middle - 1] + sortedScores[middle]) / 2 : sortedScores[middle];
 		medianSpan.innerHTML = `${median}`;
 
 		const counts = {};
-		scores.forEach(score => {
-			counts[score] = counts[score] ? counts[score] + 1 : 1;
-		});
-		const mode = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+		scores.forEach(score => { counts[score] = counts[score] ? counts[score] + 1 : 1; });
+		const mode         = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
 		modeSpan.innerHTML = `${mode}`;
 	}
 
 	async function createChart() {
 		const temp = await fetchData();
-		const reverse = temp.reverse();
+
+		console.log("DROPDOWN", dropDown.value, temp);
+
+		const reverse    = temp.reverse();
 		const rev_scores = parseInt(dropDown.value) === -1 ? reverse : reverse.slice(0, parseInt(dropDown.value));
-		const scores = rev_scores.reverse();
+		const scores     = rev_scores.reverse();
 
-		// const canvas = document.getElementById('scoreChart');
+		const canvas = document.getElementById('scoreChart');
 
-		// if (!canvas) {
-		// 	setTimeout(createChart, 50);
-		// 	return	
-		// }
+		if(!canvas) {
+			console.log("Has to enter");
+			setTimeout(createChart, 50);
+			return
+		}
 
-		// const ctx = canvas.getContext('2d');
+		const ctx = canvas.getContext('2d');
 
-		// ctx.canvas.width = 600;
-		// ctx.canvas.height = 400;
+		ctx.canvas.width  = 600;
+		ctx.canvas.height = 400;
 
-		// if (myChart) {
-		// 	myChart.destroy();
-		// }
-		// myChart = new Chart(ctx, {
-		// 	type: 'line',
-		// 	data: {
-		// 		labels: scores.map((_, index) => `Round ${index + 1}`),
-		// 		datasets: [{
-		// 			label: 'Scores',
-		// 			data: scores,
-		// 			borderColor: 'rgb(75, 192, 192)',
-		// 			tension: 0.1
-		// 		}]
-		// 	},
-		// 	options: {
-		// 		scales: {
-		// 			y: {
-		// 				beginAtZero: true
-		// 			}
-		// 		}
-		// 	}
-		// });
+		if(myChart) {
+			myChart.destroy();
+		}
+
+		myChart = new Chart(canvas, {
+			type: 'line',
+			data: {
+				labels: scores.map((_, index) => `Round ${index + 1}`),
+				datasets: [{
+					label: 'Scores',
+					data: scores,
+					borderColor: 'rgb(75, 192, 192)',
+					tension: 0.1,
+				}]
+			},
+			options: { scales: { y: { beginAtZero: true } } }
+		});
 
 		fetchStats(scores);
-	}	
+	}
 
 	const onPageLoad = () => {
-		if (document.querySelector("div[class*='primary-menu_wrapper__3ahEU']") == null) {
+		if (document.querySelector("div[class*='primary-menu_wrapper']") == null) {
 			setTimeout(onPageLoad, 50);
-		}else {
+		} else {
 			if (document.querySelector("div[class*='geocoach-item']") != null) {
 				return;
 			}
@@ -145,24 +142,28 @@ function codeToLoad() {
 			closeButton.style.margin = "0";
 			closeButton.style.transform = "translateX(-50%)";
 
-			// let divChartContainer = document.createElement("div");
-			// divChartContainer.style.width = "100%";
-			// divChartContainer.style.height = "80%";
-			// divChartContainer.style.display = "flex";
-			// divChartContainer.style.flexDirection = "column";
-			// divChartContainer.style.justifyContent = "center";
-			// divChartContainer.style.alignItems = "center";
+			let divChartContainer = document.createElement("div");
+			divChartContainer.style.width = "100%";
+			divChartContainer.style.height = "80%";
+			divChartContainer.style.display = "flex";
+			divChartContainer.style.flexDirection = "column";
+			divChartContainer.style.justifyContent = "center";
+			divChartContainer.style.alignItems = "center";
 
-			// let canvas = document.createElement("canvas");
-			// canvas.id = "scoreChart";
-			// canvas.width = 600;
-			// canvas.height = 400;
-			// canvas.style.maxWidth = "100%";
-			// canvas.style.height = "auto"; // Maintain aspect ratio
-			// canvas.style.display = "block"; // To block scale the width
-			// canvas.style.boxSizing = "border-box"; // Include padding and borders in the element's total width and height
-			// canvas.style.border = "1px solid white";
+			let canvas = document.createElement("canvas");
+			canvas.id = "scoreChart";
+			canvas.width = 600;
+			canvas.height = 400;
+			canvas.style.maxWidth = "100%";
+			canvas.style.height = "auto"; // Maintain aspect ratio
+			canvas.style.display = "block"; // To block scale the width
+			canvas.style.boxSizing = "border-box"; // Include padding and borders in the element's total width and height
+			canvas.style.border = "1px solid white";
 
+			divChartContainer.appendChild(canvas);
+
+			// Create early
+			createChart();
 
 			let avgLabel = document.createElement("label");
 			avgLabel.innerHTML = "Average: ";
@@ -267,15 +268,13 @@ function codeToLoad() {
 			dropDown.onchange = function() {
 				createChart();
 			}
-
-			// divChartContainer.appendChild(canvas);
 			
 			closeButton.onclick = function() {
 				dialog.close();
 			}
 
 			dialogContent.appendChild(dialogTitle);
-			// dialogContent.appendChild(divChartContainer);
+			dialogContent.appendChild(divChartContainer);
 			dialogContent.appendChild(divStats);
 			dialogContent.appendChild(dropDown);
 			dialogContent.appendChild(closeButton);
@@ -286,18 +285,13 @@ function codeToLoad() {
 			let button = document.querySelector("div[class*='geocoach-item'] button");
 			button.onclick = function() {
 				dialog.showModal();
-				createChart();
 			}
 			
 		}
 	}
 
-	if (window.location.href == "https://www.geoguessr.com/") {		
-		onPageLoad();
-	} 
-
 	setInterval(() => {
-		if (window.location.href == "https://www.geoguessr.com/") {
+		if(window.location.href == "https://www.geoguessr.com/") {
 			onPageLoad();
 		}
 	}, 500);
@@ -419,10 +413,10 @@ function codeToLoad() {
 function codeLoad() {
 	var container = document.head || document.documentElement
 
-	var lscript = document.createElement('script');
+	var lscript  = document.createElement('script');
 	lscript.type = 'text/javascript';
-	lscript.src = "https://cdn.jsdelivr.net/npm/chart.js";
-	lscript.id = 'ChartJSScript';
+	lscript.src  = "https://cdn.jsdelivr.net/npm/chart.js";
+	lscript.id   = 'ChartJSScript';
 	container.insertBefore(lscript, container.children[0]);
 
 	lscript.onload = function() {
@@ -431,7 +425,7 @@ function codeLoad() {
 		script.id   = 'GeoCoachScript';
 		var code    = 'const inline = 1;' + codeToLoad.toString() + 'codeToLoad();';
 		script.appendChild(document.createTextNode(code));
-	
+
 		container.insertBefore(script, container.children[0]);
 	}
 }
