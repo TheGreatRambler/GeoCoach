@@ -1,5 +1,8 @@
-Can you explain to me how a player who is looking at images would confuse "%s" which this player has incorrectly guessed (make sure to call it the "guess"), for "%s", which is what the player should have guessed (make sure to call it the "actual location"), and how they would differentiate them.
+I, the person prompting you, is a Geoguessr player. I looked at an image and identified a location as a guess for the one in the image I have seen. I have just guessed "%s" after looking at an image of "%s", the actual. The image of the actual location is attached. Try to think through my thought process for choosing the location I did and provide a short list of tips that could help me identify the specific details of the actual location that set it apart from my guess. When mentioning the guess location and actual location specify them.
 
-Answer in 5 sentences or less and give highly specific directions regarding the actual locations mentioned. Consider that this player is likely looking at images taken from a moving car and try to mention differences in places that would be visible from roads. Provide an even mix of indicators to identify the locations. Do not provide any excuses for your answers, simply get to the point and answer the question. Emphasize differences between regions, not between roads or exact addresses. If you reference an uncommon word or term define it clearly. Speak personally as if you are trying to teach someone how to identify the second location. Do not specify the exact differences between each location, choose only the most relevant comparisons. 
+When talking about a general noun provide exact examples of the nouns that each location has.
+Avoid mentioning details you cannot verify:
+* signs
+* advertisments
 
-The following image is the picture of the actual location that this player is trying to identify. Analyze it in order to provide help to the player but do not be very verbose.
+Focus on differences between regions or countries, not specific addresses. Introduce variation in sentence structure into your output. Finally, and most important, your output should be short. Your entire output should be 5 sentences or less or 100 words or less, whichever comes first.

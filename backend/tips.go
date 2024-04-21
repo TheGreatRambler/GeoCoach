@@ -25,6 +25,22 @@ import (
 	"gorm.io/gorm"
 )
 
+func IntPow(n, m int) int {
+	if m == 0 {
+		return 1
+	}
+
+	if m == 1 {
+		return n
+	}
+
+	result := n
+	for i := 2; i <= m; i++ {
+		result *= n
+	}
+	return result
+}
+
 func (app *App) GenerateTip(roundID uint) {
 	round := &Round{}
 	app.DB.First(&round, roundID)
@@ -53,12 +69,9 @@ func (app *App) GenerateTip(roundID uint) {
 	//	return
 	//}
 
-	//zoom := 5
-	//width := 13312
-	//height := 6656
-	zoom := 4
-	width := 6656
-	height := 3328
+	zoom := 3
+	width := 6656 / (IntPow(2, 4-zoom))
+	height := 6656 / (IntPow(2, 5-zoom))
 	tiles_width := int(math.Ceil(float64(width) / 512))
 	tiles_height := int(math.Ceil(float64(height) / 512))
 
@@ -140,7 +153,7 @@ func (app *App) GenerateTip(roundID uint) {
 
 	result := app.DB.Create(&Tip{
 		RoundID:   roundID,
-		TipString: string(text),
+		TipString: strings.ReplaceAll(string(text), "* ", ""),
 		UserID:    round.UserID,
 	})
 

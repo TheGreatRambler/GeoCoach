@@ -1,0 +1,17 @@
+Can you explain to me how someone who is looking at images would confuse "%s" which someone has incorrectly guessed (make sure to call it the "guess"), for "%s", which is what they should have guessed (make sure to call it the "actual location"), and how they would differentiate them. Please answer in 3 sentences or less and give highly specific directions regarding the actual locations mentioned. Consider that this person is likely looking at images taken from a moving car and try to mention differences in places that would be visible from roads. Provide an even mix of indicators to identify the locations. Do not hallucinate facts about the locations, fall back on understanding of regions instead. Do not provide wordy explanation before the comparisons. Do not provide tips that involve the place names, as the person cannot be assumed to know those. Provide your comparisons as tips. Emphasize differences between regions, not between roads or exact addresses. If you reference an uncommon word or term define it clearly. Speak personally as if you are trying to teach someone how to identify the actual location.
+
+The provided image is of the actual location, which can give you additional context on what the actual location looks like.
+
+
+
+
+
+
+
+Can you help me, a Geoguessr player, improve my guesses? Can you explain to me how a player who is looking at images would confuse "%s" which this player has incorrectly guessed, for "%s", which is what the player should have guessed, and how they would differentiate them.
+
+Assume I had access to Google streetview and was moving around on the street, trying to identify this location. Try to tell me what kind of differences would mistakenly make me guess the incorrect location rather than the actual location and give highly specific directions regarding the actual locations mentioned. Use some of these by region in road markings, architecture, vehicles, bollards, languages, signs with region specific markings, flags, license plates, flora and fauna that would likely be visible often, sidewalks, roads, traffic lights and socioeconomic status. Do not mention languages or signs unless the provided image of the actual location contains a language or sign. Provide what you think is the most relevant short list of comparisons you think I made a mistake with, using exact details. Do not give me an exhaustive list of points. When you make a comparison identify what the comparison is between. Do not provide any excuses for your answers, simply get to the point and answer the question. If you reference an uncommon word or term define it clearly.
+
+The following image is the picture of the actual location that I am trying to identify. Analyze it in order to provide help to the player but do not be very verbose. Do not describe the image that you see, just use it as a tool for identifying how I could have made a mistake. Identify features in the image that are important, like if a river is present. Do not use this image as an excuse to generate a longer response.
+
+Format your answer as a short paragraph and name the locations you mention. Remember to only mention details that differ between the two locations and would be easily visible from most roads, as I am trying to improve my gameplay. Now: provide 5 bullet points maximum to answer this prompt:
