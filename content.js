@@ -1,6 +1,6 @@
 function codeToLoad() {
-	if (document.cookie.split(';').some((item) => item.trim().startsWith('geocoach='))) {
-		console.log('Cookie geocoach already exists.'); 
+	if(document.cookie.split(';').some((item) => item.trim().startsWith('geocoach='))) {
+		console.log('Cookie geocoach already exists.');
 	} else {
 		document.cookie = "geocoach=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
 		console.log('Cookie geocoach created and set to true.');
@@ -26,30 +26,31 @@ function codeToLoad() {
 
 	function usingGeocoach() {
 		const cookieName = 'geocoach';
-		let cookies = document.cookie.split(';');
-		let cookieValue = cookies.find(cookie => cookie.trim().startsWith(cookieName + '='));
-	  
-		if (cookieValue) {
-		  cookieValue = cookieValue.split('=')[1];
-		  return cookieValue === 'true';
+		let cookies      = document.cookie.split(';');
+		let cookieValue  = cookies.find(cookie => cookie.trim().startsWith(cookieName + '='));
+
+		if(cookieValue) {
+			cookieValue = cookieValue.split('=')[1];
+			return cookieValue === 'true';
 		}
 		return false;
-	  }	  
+	}
 
 	function makeBird() {
 		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("viewBox", "0 0 25 25");
-	  
+
 		// Define the bird's outline as a single path
 		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		path.setAttribute("d", "M3,12 Q5,9 12.5,10 T23,12 Q22,18 12.5,18 T3,12 Z M10,14 Q10,13 11,13 T12,14 M17,14 Q17,13 18,13 T19,14");
+		path.setAttribute("d",
+			"M3,12 Q5,9 12.5,10 T23,12 Q22,18 12.5,18 T3,12 Z M10,14 Q10,13 11,13 T12,14 M17,14 Q17,13 18,13 T19,14");
 		path.setAttribute("fill", "none");
 		path.setAttribute("stroke", "white");
 		path.setAttribute("stroke-width", "2.0");
-	  
+
 		// Append the path to the SVG element
 		svg.appendChild(path);
-			
+
 		return svg;
 	}
 
@@ -79,42 +80,44 @@ function codeToLoad() {
 	async function createChart() {
 		const temp = await fetchData();
 
-		const reverse    = temp.reverse();
-		const rev_scores = parseInt(dropDown.value) === -1 ? reverse : reverse.slice(0, parseInt(dropDown.value));
-		const scores     = rev_scores.reverse();
+		setTimeout(() => {
+			const reverse    = temp.reverse();
+			const rev_scores = parseInt(dropDown.value) === -1 ? reverse : reverse.slice(0, parseInt(dropDown.value));
+			const scores     = rev_scores.reverse();
 
-		const canvas = document.getElementById('scoreChart');
+			const canvas = document.getElementById('scoreChart');
 
-		if(!canvas) {
-			console.log("Has to enter");
-			setTimeout(createChart, 50);
-			return
-		}
+			if(!canvas) {
+				console.log("Has to enter");
+				setTimeout(createChart, 50);
+				return
+			}
 
-		const ctx = canvas.getContext('2d');
+			const ctx = canvas.getContext('2d');
 
-		ctx.canvas.width  = 600;
-		ctx.canvas.height = 400;
+			ctx.canvas.width  = 600;
+			ctx.canvas.height = 400;
 
-		if(myChart) {
-			myChart.destroy();
-		}
+			if(myChart) {
+				myChart.destroy();
+			}
 
-		myChart = new Chart(canvas, {
-			type: 'line',
-			data: {
-				labels: scores.map((_, index) => `Round ${index + 1}`),
-				datasets: [{
-					label: 'Scores',
-					data: scores,
-					borderColor: 'rgb(75, 192, 192)',
-					tension: 0.1,
-				}]
-			},
-			options: { scales: { y: { beginAtZero: true } } }
-		});
+			myChart = new Chart(canvas, {
+				type: 'line',
+				data: {
+					labels: scores.map((_, index) => `Round ${index + 1}`),
+					datasets: [{
+						label: 'Scores',
+						data: scores,
+						borderColor: 'rgb(75, 192, 192)',
+						tension: 0.1,
+					}]
+				},
+				options: { scales: { y: { beginAtZero: true } } }
+			});
 
-		fetchStats(scores);
+			fetchStats(scores);
+		}, 0);
 	}
 
 	const onPageLoad = () => {
@@ -388,13 +391,13 @@ function codeToLoad() {
 
 	setInterval(() => {
 		if(window.location.href == "https://www.geoguessr.com/") {
-			if (document.querySelector("div[class*='game-menu_settingsContainer']")) {
+			if(document.querySelector("div[class*='game-menu_settingsContainer']")) {
 				onSettingsLoad();
 				mainPageState = "settings";
-			}else {
+			} else {
 				onPageLoad();
-				if (mainPageState != "settings") {
-					if (!usingGeocoach()) {
+				if(mainPageState != "settings") {
+					if(!usingGeocoach()) {
 						removeGeocoachMenu();
 					}
 				}
