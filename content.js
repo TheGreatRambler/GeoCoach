@@ -1,4 +1,11 @@
 function codeToLoad() {
+	if (document.cookie.split(';').some((item) => item.trim().startsWith('geocoach='))) {
+		console.log('Cookie geocoach already exists.'); 
+	} else {
+		document.cookie = "geocoach=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+		console.log('Cookie geocoach created and set to true.');
+	}	
+
 	window.origFetch = window.fetch;
 	let myChart      = null;
 	let dropDown     = document.createElement("select");
@@ -14,6 +21,18 @@ function codeToLoad() {
 		}
 		return asciiString;
 	}
+
+	function usingGeocoach() {
+		const cookieName = 'geocoach';
+		let cookies = document.cookie.split(';');
+		let cookieValue = cookies.find(cookie => cookie.trim().startsWith(cookieName + '='));
+	  
+		if (cookieValue) {
+		  cookieValue = cookieValue.split('=')[1];
+		  return cookieValue === 'true';
+		}
+		return false;
+	  }	  
 
 	async function fetchData() {
 		const response = await window.origFetch('http://localhost:8080/rounds');
@@ -81,8 +100,14 @@ function codeToLoad() {
 
 	const onPageLoad = () => {
 		if (document.querySelector("div[class*='primary-menu_wrapper']") == null) {
+			if (!usingGeocoach()) {
+				return;
+			}
 			setTimeout(onPageLoad, 50);
 		} else {
+			if (!usingGeocoach()) {
+				return;
+			}
 			if (document.querySelector("div[class*='geocoach-item']") != null) {
 				return;
 			}
@@ -291,9 +316,49 @@ function codeToLoad() {
 		}
 	}
 
+	const onSettingsLoad = () => {
+		if (!document.querySelector("label[class*='game-options_option']")) {
+			setTimeout(onSettingsLoad, 50);
+		}else {
+			if (document.querySelector("label[class*='geocoach-item']")) {
+				return;
+			}
+
+			console.log("Settings loaded");
+
+			let option = document.querySelectorAll("label[class*='game-options_option']");
+			let enableDisable = option[option.length-1].cloneNode(true);
+			enableDisable.classList.add("geocoach-item");
+
+			let label = enableDisable.children[1]
+			label.innerHTML = "GeoCoach";
+
+			let container = document.querySelector("div[class*='game-menu_optionsContainer']");
+			container.appendChild(enableDisable);
+
+			let checkbox = document.querySelector('label[class*="geocoach-item"] input');
+
+			checkbox.value = usingGeocoach();
+			checkbox.checked = usingGeocoach()
+
+			checkbox.onchange = function() {
+				if (checkbox.checked) {
+					document.cookie = "geocoach=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+				}else {
+					document.cookie = "geocoach=false; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+				}
+			}
+
+		}
+	}
+
 	setInterval(() => {
 		if(window.location.href == "https://www.geoguessr.com/") {
-			onPageLoad();
+			if (document.querySelector("div[class*='game-menu_settingsContainer']")) {
+				onSettingsLoad();
+			}else {
+				onPageLoad();
+			}
 		}
 	}, 500);
 
@@ -314,7 +379,7 @@ function codeToLoad() {
 			// }
 
 			window.origFetch(url, options).then(response => {
-				if(isGamesPost) {
+				if(isGamesPost && usingGeocoach()) {
 					response.clone().json().then((roundsData) => {
 						setTimeout(async () => {
 							let resultsContainer = document.querySelector('div[class*="result-layout_bottom"]');
