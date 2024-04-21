@@ -7,7 +7,6 @@ import (
 	_ "embed"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -22,7 +21,6 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
-	"gorm.io/gorm"
 )
 
 //go:embed tip_prompt.txt
@@ -166,22 +164,20 @@ func (app *App) GenerateTip(roundID uint) {
 }
 
 func (app *App) GetTips(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("round_id")
 
-	tip := &Tip{}
-	result := app.DB.Where("round_id = ?", id).First(&tip)
+	// make results array
+	results := []Tip{}
 
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			w.WriteHeader(http.StatusNotFound) // Set HTTP status to 404
-			json.NewEncoder(w).Encode(map[string]string{"error": "Tip not found"})
-			return
-		}
-
-		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
-		return
+	if r.URL.Query().Get("round_id") != "" {
+		rid := r.URL.Query().Get("round_id")
+		app.DB.Where("round_id = ?", rid).Find(&results)
+	} else if r.URL.Query().Get("user_id") != "" {
+		uid := r.URL.Query().Get("user_id")
+		app.DB.Where("user_id = ?", uid).Find(&results)
+	} else {
+		app.DB.Find(&results)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(tip)
+	json.NewEncoder(w).Encode(results)
 }
