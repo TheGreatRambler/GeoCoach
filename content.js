@@ -4,7 +4,7 @@ function codeToLoad() {
 	} else {
 		document.cookie = "geocoach=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
 		console.log('Cookie geocoach created and set to true.');
-	}	
+	}
 
 	window.origFetch = window.fetch;
 	let myChart      = null;
@@ -12,6 +12,8 @@ function codeToLoad() {
 	let avgSpan      = document.createElement("span");
 	let medianSpan   = document.createElement("span");
 	let modeSpan     = document.createElement("span");
+
+	let mainPageState = "none"
 
 	function hexToAscii(hexString) {
 		let asciiString = '';
@@ -33,6 +35,23 @@ function codeToLoad() {
 		}
 		return false;
 	  }	  
+
+	function makeBird() {
+		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		svg.setAttribute("viewBox", "0 0 25 25");
+	  
+		// Define the bird's outline as a single path
+		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		path.setAttribute("d", "M3,12 Q5,9 12.5,10 T23,12 Q22,18 12.5,18 T3,12 Z M10,14 Q10,13 11,13 T12,14 M17,14 Q17,13 18,13 T19,14");
+		path.setAttribute("fill", "none");
+		path.setAttribute("stroke", "white");
+		path.setAttribute("stroke-width", "2.0");
+	  
+		// Append the path to the SVG element
+		svg.appendChild(path);
+			
+		return svg;
+	}
 
 	async function fetchData() {
 		const response = await window.origFetch('http://localhost:8080/rounds');
@@ -349,6 +368,21 @@ function codeToLoad() {
 				}
 			}
 
+			enableDisable.children[0].remove();
+
+			const birdSVG = makeBird();
+
+			birdSVG.style.width = "1.5rem";
+			birdSVG.style.height = "1.5rem";
+
+			enableDisable.insertBefore(birdSVG, enableDisable.children[0]);
+
+		}
+	}
+
+	const removeGeocoachMenu = () => {
+		if (document.querySelector("div[class*='geocoach-item']")) {
+			document.querySelector("div[class*='geocoach-item']").remove();
 		}
 	}
 
@@ -356,8 +390,15 @@ function codeToLoad() {
 		if(window.location.href == "https://www.geoguessr.com/") {
 			if (document.querySelector("div[class*='game-menu_settingsContainer']")) {
 				onSettingsLoad();
+				mainPageState = "settings";
 			}else {
 				onPageLoad();
+				if (mainPageState != "settings") {
+					if (!usingGeocoach()) {
+						removeGeocoachMenu();
+					}
+				}
+				mainPageState = "main";
 			}
 		}
 	}, 500);
