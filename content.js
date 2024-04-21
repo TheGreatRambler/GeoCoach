@@ -21,29 +21,24 @@ function codeToLoad() {
 		return rounds.map(round => round.Score);
 	}
 
-	// async function fetchStats() {
-	// 	const temp = await fetchData();
-	// 	const reverse = temp.reverse();
-	// 	const rev_scores = parseInt(dropDown.value) === -1 ? reverse : reverse.slice(0, parseInt(dropDown.value));
-	// 	const scores = rev_scores.reverse();
+	async function fetchStats(scores) {
+		const sum = scores.reduce((a, b) => a + b, 0);
+		const avg = sum / scores.length;
+		avgSpan.innerHTML = `${avg.toFixed(2)}`;
 
-	// 	const sum = scores.reduce((a, b) => a + b, 0);
-	// 	const avg = sum / scores.length;
-	// 	avgSpan.innerHTML = `${avg.toFixed(2)}`;
+		const sortedScores = scores.slice().sort((a, b) => a - b);
+		const middle = Math.floor(sortedScores.length / 2);
+		const isEven = sortedScores.length % 2 === 0;
+		const median = isEven ? (sortedScores[middle - 1] + sortedScores[middle]) / 2 : sortedScores[middle];
+		medianSpan.innerHTML = `${median}`;
 
-	// 	const sortedScores = scores.slice().sort((a, b) => a - b);
-	// 	const middle = Math.floor(sortedScores.length / 2);
-	// 	const isEven = sortedScores.length % 2 === 0;
-	// 	const median = isEven ? (sortedScores[middle - 1] + sortedScores[middle]) / 2 : sortedScores[middle];
-	// 	medianSpan.innerHTML = `${median}`;
-
-	// 	const counts = {};
-	// 	scores.forEach(score => {
-	// 		counts[score] = counts[score] ? counts[score] + 1 : 1;
-	// 	});
-	// 	const mode = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
-	// 	modeSpan.innerHTML = `${mode}`;
-	// }
+		const counts = {};
+		scores.forEach(score => {
+			counts[score] = counts[score] ? counts[score] + 1 : 1;
+		});
+		const mode = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+		modeSpan.innerHTML = `${mode}`;
+	}
 
 	async function createChart() {
 		const temp = await fetchData();
@@ -79,6 +74,8 @@ function codeToLoad() {
 				}
 			}
 		});
+
+		fetchStats(scores);
 	}	
 
 	const onPageLoad = () => {
@@ -275,7 +272,7 @@ function codeToLoad() {
 
 			dialogContent.appendChild(dialogTitle);
 			dialogContent.appendChild(divChartContainer);
-			// dialogContent.appendChild(divStats);
+			dialogContent.appendChild(divStats);
 			dialogContent.appendChild(dropDown);
 			dialogContent.appendChild(closeButton);
 			dialog.appendChild(dialogContent);
@@ -285,7 +282,6 @@ function codeToLoad() {
 			let button = document.querySelector("div[class*='geocoach-item'] button");
 			button.onclick = function() {
 				dialog.showModal();
-				// createChart();
 			}
 			
 		}
