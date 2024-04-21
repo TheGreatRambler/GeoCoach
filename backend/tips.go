@@ -16,7 +16,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/fogleman/gg"
 
 	"github.com/disintegration/imaging"
@@ -32,6 +31,9 @@ var guess_image_prompt string
 
 //go:embed actual_image_prompt.txt
 var actual_image_prompt string
+
+//go:embed summarize_prompt.txt
+var summarize_prompt string
 
 func IntPow(n, m int) int {
 	if m == 0 {
@@ -130,7 +132,7 @@ func DownloadPanoramaFromLocation(lat float64, lon float64) (*bytes.Buffer, erro
 		return nil, err
 	}
 
-	if len(panoramaList) == 0 {
+	if len(panoramaList) == 0 || panoramaList[0] == nil {
 		return nil, nil
 	}
 
@@ -224,6 +226,7 @@ func (app *App) GenerateTip(roundID uint) {
 	defer client.Close()
 
 	model := client.GenerativeModel("gemini-pro-vision")
+	textModel := client.GenerativeModel("gemini-pro")
 
 	// generate tip
 	prompt := []genai.Part{}
@@ -275,8 +278,6 @@ func (app *App) GenerateTip(roundID uint) {
 		URI:      actualFile.URI,
 	})
 
-	spew.Dump(prompt)
-
 	output, err := model.GenerateContent(ctx, prompt...)
 
 	if err != nil {
@@ -288,10 +289,25 @@ func (app *App) GenerateTip(roundID uint) {
 	if !ok {
 		log.Fatal("Expected tip to be text")
 	}
+	tipText := strings.ReplaceAll(string(text), "* ", "")
+
+	output, err = textModel.GenerateContent(ctx, []genai.Part{genai.Text(fmt.Sprintf(summarize_prompt, tipText))}...)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tipSummary := output.Candidates[len(output.Candidates)-1].Content.Parts[len(output.Candidates[len(output.Candidates)-1].Content.Parts)-1]
+	summaryText, ok := tipSummary.(genai.Text)
+	if !ok {
+		log.Fatal("Expected tip to be text")
+	}
+
+	fmt.Printf("Thing: %s\n", summaryText)
 
 	result := app.DB.Create(&Tip{
 		RoundID:   roundID,
-		TipString: strings.ReplaceAll(string(text), "* ", ""),
+		TipString: tipText,
 		UserID:    round.UserID,
 	})
 

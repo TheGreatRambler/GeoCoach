@@ -449,9 +449,11 @@ function codeToLoad() {
 									img.style.width  = '200px';
 									img.style.height = '200px';
 
-									let tipElement               = document.createElement('h3');
-									tipElement.style.margin      = "auto";
-									tipElement.style.marginRight = "25px";
+									let tipElement                = document.createElement('h3');
+									tipElement.style.marginRight  = "25px";
+									tipElement.style.marginLeft   = "25px";
+									tipElement.style.marginTop    = "auto";
+									tipElement.style.marginBottom = "auto";
 
 									setInterval(() => {
 										if(img.src.endsWith('owlmouthnod.png')) {
@@ -499,11 +501,21 @@ function codeToLoad() {
 										method: 'POST',
 									})).json();
 
+									let loadingScreenStrings = [
+										"Thinking.",
+										"Thinking..",
+										"Thinking...",
+									];
+									let loadingScreenStringsIndex = 0;
+
 									let pollIntervalHandle = setInterval(async () => {
 										fetch(`http://localhost:8080/tips?round_id=${roundsRes.ID}`, {
 											method: 'GET',
 										})
 											.then(async (tipRes) => {
+												tipElement.innerHTML = loadingScreenStrings[loadingScreenStringsIndex];
+												loadingScreenStringsIndex = (loadingScreenStringsIndex + 1) % 3;
+
 												if(tipRes.status === 200) {
 													let tipData = await tipRes.json();
 

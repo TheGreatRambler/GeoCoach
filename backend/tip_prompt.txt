@@ -5,13 +5,88 @@ For this feedback, please only have 4 sentences or 70 words.
 Here is some useful information about the game:
 
 The following countries are in the game:
-Albania, Andorra, Argentina, Australia, Austria, Bangladesh, Belgium, Bhutan, Bolivia, Botswana, Brazil, Bulgaria, 
-Cambodia, Canada, Chile, Colombia, Croatia, Czechia, Denmark, Dominican Republic, Ecuador, Estonia, Eswatini, Finland, 
-France, Germany, Ghana, Greece, Greenland, Guatemala, Hungary, Iceland, Indonesia, Ireland, Israel, Italy, Japan, Jordan, 
-Kenya, Kyrgyzstan, Latvia, Lesotho, Lithuania, Luxembourg, Malaysia, Mexico, Mongolia, Montenegro, Netherlands, New Zealand, 
-Nigeria, North Macedonia, North Mariana Islands, Norway, Palestine, Panama, Peru, Philippines, Poland, Portugal, Romania, 
-Russia, Senegal, Serbia, Singapore, Slovakia, Slovenia, South Africa, South Korea, Spain, Sri Lanka, Sweden, Switzerland, 
-Taiwan, Thailand, Turkey, Uganda, Ukraine, United Arab Emirates, United Kingdom, United States, Uruguay
+Albania
+Andorra
+Argentina
+Australia
+Austria
+Bangladesh
+Belgium
+Bhutan
+Bolivia
+Botswana
+Brazil
+Bulgaria
+Cambodia
+Canada
+Chile
+Colombia
+Croatia
+Czechia
+Denmark
+Dominican Republic
+Ecuador
+Estonia
+Eswatini
+Finland
+France
+Germany
+Ghana
+Greece
+Greenland
+Guatemala
+Hungary
+Iceland
+Indonesia
+Ireland
+Israel
+Italy
+Japan
+Jordan
+Kenya
+Kyrgyzstan
+Latvia
+Lesotho
+Lithuania
+Luxembourg
+Malaysia
+Mexico
+Mongolia
+Montenegro
+Netherlands
+New Zealand
+Nigeria
+North Macedonia
+North Mariana Islands
+Norway
+Palestine
+Panama
+Peru
+Philippines
+Poland
+Portugal
+Romania
+Russia
+Senegal
+Serbia
+Singapore
+Slovakia
+Slovenia
+South Africa
+South Korea
+Spain
+Sri Lanka
+Sweden
+Switzerland
+Taiwan
+Thailand
+Turkey
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
 
 IF the player guesses in a country not in that list, make sure to tell me!
 
@@ -33,6 +108,8 @@ how urban the area is
 
 With these details, you must be very specific! 
 For Example: What is the differences between the vegetation? What is the architecture like?
+
+Also try to mention the locations you have recieved in a very short form, at most just a city name. Only mention them once. Please do not focus on these locations, simply restate them for me to read. I am not interested in trivia about them. Do not try to explain why an image must be a location because you already know and I don't need to read that.
 
 Here are good responses with the circumstances:
 
