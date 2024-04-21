@@ -1,8 +1,52 @@
-I, the person prompting you, is a Geoguessr player. I looked at an image and identified a location as a guess for the one in the image I have seen. I have just guessed "%s" after looking at an image of "%s", the actual. The image of the actual location is attached. Try to think through my thought process for choosing the location I did and provide a short list of tips that could help me identify the specific details of the actual location that set it apart from my guess. When mentioning the guess location and actual location specify them.
+I am learning how to play a game where you see a place and guess where it is in the world. 
+I just guessed %s when the place I saw was %s. I would like some tips to help guess better in the future.
+For this feedback, please only have 4 sentences or 70 words.
 
-When talking about a general noun provide exact examples of the nouns that each location has.
-Avoid mentioning details you cannot verify:
-* signs
-* advertisments
+Here is some useful information about the game:
 
-Focus on differences between regions or countries, not specific addresses. Introduce variation in sentence structure into your output. Finally, and most important, your output should be short. Your entire output should be 5 sentences or less or 100 words or less, whichever comes first.
+The following countries are in the game:
+Albania, Andorra, Argentina, Australia, Austria, Bangladesh, Belgium, Bhutan, Bolivia, Botswana, Brazil, Bulgaria, 
+Cambodia, Canada, Chile, Colombia, Croatia, Czechia, Denmark, Dominican Republic, Ecuador, Estonia, Eswatini, Finland, 
+France, Germany, Ghana, Greece, Greenland, Guatemala, Hungary, Iceland, Indonesia, Ireland, Israel, Italy, Japan, Jordan, 
+Kenya, Kyrgyzstan, Latvia, Lesotho, Lithuania, Luxembourg, Malaysia, Mexico, Mongolia, Montenegro, Netherlands, New Zealand, 
+Nigeria, North Macedonia, North Mariana Islands, Norway, Palestine, Panama, Peru, Philippines, Poland, Portugal, Romania, 
+Russia, Senegal, Serbia, Singapore, Slovakia, Slovenia, South Africa, South Korea, Spain, Sri Lanka, Sweden, Switzerland, 
+Taiwan, Thailand, Turkey, Uganda, Ukraine, United Arab Emirates, United Kingdom, United States, Uruguay
+
+IF the player guesses in a country not in that list, make sure to tell me!
+
+This is an extremely important requirement. If you fail to alert me that a country I guessed is not in this list there could severe consequences.
+
+For example: if I guess in Niger then tell me, Niger cannot ever be a valid guess in Geoguessr
+Another example: If I guess in China tell me, Guesses in China are invalid because there isn't street view coverage.
+
+License Plates are blurred, you can see the main color but not much more.
+
+Some examples of helpful differentiating details are:
+types of trees in the areas
+side of road driven on
+road signs
+language on signs and advertisments
+flags
+levels of vegetation
+how urban the area is
+
+With these details, you must be very specific! 
+For Example: What is the differences between the vegetation? What is the architecture like?
+
+Here are good responses with the circumstances:
+
+If the guess is close:
+Good try! Differentiating places this close together is tricky. The correct location is more urban than the guess location and thus should be further into the city center.
+
+If the guess is in a place with similar vegetation or architecture:
+Good guess, these countries do have similar architecture but the road signs in the correct country are in spanish while the language of the country you guess is potrugese.
+
+If the guess has the same language:
+You got the language correct. Try looking for locations with rivers since the true location had a river and the guessed location does not.
+
+Keep in mind this is not an exhaustive list and each of the examples provided could have many more detailed reasons.
+
+Also keep in mind the guess can be made with only things I can see in the provided image, so large details such as country shape or distance between cities is not good reccomendations.
+
+If the information you know about the countries is too similar and provides no distinguishing characteristics, say between the UK and New Zealand, please tell the player the locations are very similar and hard to differentiate. Reccomend them to look for things specific to that country or a flag. 

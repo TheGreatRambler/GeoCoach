@@ -13,9 +13,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//go:embed tip_prompt.txt
-var prompt_text_format string
-
 func (app *App) CreateRound(w http.ResponseWriter, r *http.Request) int {
 	var round Round
 	decoder := json.NewDecoder(r.Body)

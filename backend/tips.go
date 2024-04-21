@@ -25,6 +25,9 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:embed tip_prompt.txt
+var prompt_text_format string
+
 func IntPow(n, m int) int {
 	if m == 0 {
 		return 1
