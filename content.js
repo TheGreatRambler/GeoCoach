@@ -46,34 +46,40 @@ function codeToLoad() {
 		const rev_scores = parseInt(dropDown.value) === -1 ? reverse : reverse.slice(0, parseInt(dropDown.value));
 		const scores = rev_scores.reverse();
 
-		const ctx = document.getElementById('scoreChart');
+		// const canvas = document.getElementById('scoreChart');
 
-		console.log(scores);
-		console.log(dropDown.value);
-		console.log(ctx);
+		// if (!canvas) {
+		// 	setTimeout(createChart, 50);
+		// 	return	
+		// }
 
-		if (myChart) {
-			myChart.destroy();
-		}
-		myChart = new Chart(ctx, {
-			type: 'line',
-			data: {
-				labels: scores.map((_, index) => `Round ${index + 1}`),
-				datasets: [{
-					label: 'Scores',
-					data: scores,
-					borderColor: 'rgb(75, 192, 192)',
-					tension: 0.1
-				}]
-			},
-			options: {
-				scales: {
-					y: {
-						beginAtZero: true
-					}
-				}
-			}
-		});
+		// const ctx = canvas.getContext('2d');
+
+		// ctx.canvas.width = 600;
+		// ctx.canvas.height = 400;
+
+		// if (myChart) {
+		// 	myChart.destroy();
+		// }
+		// myChart = new Chart(ctx, {
+		// 	type: 'line',
+		// 	data: {
+		// 		labels: scores.map((_, index) => `Round ${index + 1}`),
+		// 		datasets: [{
+		// 			label: 'Scores',
+		// 			data: scores,
+		// 			borderColor: 'rgb(75, 192, 192)',
+		// 			tension: 0.1
+		// 		}]
+		// 	},
+		// 	options: {
+		// 		scales: {
+		// 			y: {
+		// 				beginAtZero: true
+		// 			}
+		// 		}
+		// 	}
+		// });
 
 		fetchStats(scores);
 	}	
@@ -139,20 +145,24 @@ function codeToLoad() {
 			closeButton.style.margin = "0";
 			closeButton.style.transform = "translateX(-50%)";
 
-			let divChartContainer = document.createElement("div");
-			divChartContainer.style.width = "100%";
-			divChartContainer.style.height = "80%";
-			divChartContainer.style.display = "flex";
-			divChartContainer.style.flexDirection = "column";
-			divChartContainer.style.justifyContent = "center";
-			divChartContainer.style.alignItems = "center";
+			// let divChartContainer = document.createElement("div");
+			// divChartContainer.style.width = "100%";
+			// divChartContainer.style.height = "80%";
+			// divChartContainer.style.display = "flex";
+			// divChartContainer.style.flexDirection = "column";
+			// divChartContainer.style.justifyContent = "center";
+			// divChartContainer.style.alignItems = "center";
 
-			let canvas = document.createElement("canvas");
-			canvas.id = "scoreChart";
-			canvas.style.width = "100%";
-			canvas.style.height = "80%";
-			canvas.style.maxWidth = "600px";
-			canvas.style.maxHeight = "600px";
+			// let canvas = document.createElement("canvas");
+			// canvas.id = "scoreChart";
+			// canvas.width = 600;
+			// canvas.height = 400;
+			// canvas.style.maxWidth = "100%";
+			// canvas.style.height = "auto"; // Maintain aspect ratio
+			// canvas.style.display = "block"; // To block scale the width
+			// canvas.style.boxSizing = "border-box"; // Include padding and borders in the element's total width and height
+			// canvas.style.border = "1px solid white";
+
 
 			let avgLabel = document.createElement("label");
 			avgLabel.innerHTML = "Average: ";
@@ -242,11 +252,7 @@ function codeToLoad() {
 			option5.value = "-1";
 			option5.innerHTML = "All";
 
-			let selectAValue = document.createElement("option");
-			selectAValue.value = "5";
-			selectAValue.innerHTML = "SELECT A VALUE";
-			selectAValue.disabled = true;
-			selectAValue.selected = true;
+			option5.selected = true;
 
 			if (dropDown.children.length > 0) {
 				dropDown.innerHTML = "";
@@ -257,21 +263,19 @@ function codeToLoad() {
 			dropDown.appendChild(option3);
 			dropDown.appendChild(option4);
 			dropDown.appendChild(option5);
-			dropDown.appendChild(selectAValue);
 
 			dropDown.onchange = function() {
 				createChart();
-				// fetchStats();
 			}
 
-			divChartContainer.appendChild(canvas);
+			// divChartContainer.appendChild(canvas);
 			
 			closeButton.onclick = function() {
 				dialog.close();
 			}
 
 			dialogContent.appendChild(dialogTitle);
-			dialogContent.appendChild(divChartContainer);
+			// dialogContent.appendChild(divChartContainer);
 			dialogContent.appendChild(divStats);
 			dialogContent.appendChild(dropDown);
 			dialogContent.appendChild(closeButton);
@@ -282,6 +286,7 @@ function codeToLoad() {
 			let button = document.querySelector("div[class*='geocoach-item'] button");
 			button.onclick = function() {
 				dialog.showModal();
+				createChart();
 			}
 			
 		}
