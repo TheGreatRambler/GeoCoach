@@ -297,13 +297,11 @@ func (app *App) GenerateTip(roundID uint) {
 		log.Fatal(err)
 	}
 
-	tipSummary := output.Candidates[len(output.Candidates)-1].Content.Parts[len(output.Candidates[len(output.Candidates)-1].Content.Parts)-1]
-	summaryText, ok := tipSummary.(genai.Text)
+	tipConcepts := output.Candidates[len(output.Candidates)-1].Content.Parts[len(output.Candidates[len(output.Candidates)-1].Content.Parts)-1]
+	tipConceptsText, ok := tipConcepts.(genai.Text)
 	if !ok {
-		log.Fatal("Expected tip to be text")
+		log.Fatal("Expected tip concepts to be text")
 	}
-
-	fmt.Printf("Thing: %s\n", summaryText)
 
 	result := app.DB.Create(&Tip{
 		RoundID:   roundID,
@@ -314,11 +312,44 @@ func (app *App) GenerateTip(roundID uint) {
 	if result.Error != nil {
 		log.Fatal(result.Error)
 	}
+
+	concepts := []*Concept{}
+	for _, conceptString := range strings.Split(string(tipConceptsText), ", ") {
+		concepts = append(concepts, &Concept{
+			RoundID: roundID,
+			UserID:  round.UserID,
+			Concept: strings.ToLower(conceptString),
+		})
+	}
+
+	result = app.DB.Create(concepts)
+
+	if result.Error != nil {
+		log.Fatal(result.Error)
+	}
 }
 
 func (app *App) GetTips(w http.ResponseWriter, r *http.Request) {
 	// make results array
 	results := []Tip{}
+
+	if r.URL.Query().Get("round_id") != "" {
+		rid := r.URL.Query().Get("round_id")
+		app.DB.Where("round_id = ?", rid).Find(&results)
+	} else if r.URL.Query().Get("user_id") != "" {
+		uid := r.URL.Query().Get("user_id")
+		app.DB.Where("user_id = ?", uid).Find(&results)
+	} else {
+		app.DB.Find(&results)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(results)
+}
+
+func (app *App) GetConcepts(w http.ResponseWriter, r *http.Request) {
+	// make results array
+	results := []Concept{}
 
 	if r.URL.Query().Get("round_id") != "" {
 		rid := r.URL.Query().Get("round_id")

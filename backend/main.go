@@ -23,11 +23,13 @@ func main() {
 
 	db.AutoMigrate(&Round{})
 	db.AutoMigrate(&Tip{})
+	db.AutoMigrate(&Concept{})
 
 	app := &App{DB: db}
 
 	http.HandleFunc("/rounds", app.RoundHandler)
 	http.HandleFunc("/tips", app.TipsHander)
+	http.HandleFunc("/concepts", app.ConceptsHander)
 	http.HandleFunc("/assets/", app.AssetsHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

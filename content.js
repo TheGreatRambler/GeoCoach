@@ -677,12 +677,15 @@ function codeToLoad() {
 									img.src          = 'http://localhost:8080/assets/owlmouthclosed.png';
 									img.style.width  = '200px';
 									img.style.height = '200px';
+									img.title        = "Tippy";
 
+									// Big tip element
 									let tipElement                = document.createElement('h3');
 									tipElement.style.marginRight  = "25px";
 									tipElement.style.marginLeft   = "25px";
 									tipElement.style.marginTop    = "auto";
 									tipElement.style.marginBottom = "auto";
+									tipElement.innerHTML          = "Thinking.";
 
 									setInterval(() => {
 										if(img.src.endsWith('owlmouthnod.png')) {

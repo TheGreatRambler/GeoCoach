@@ -31,6 +31,16 @@ func (app *App) TipsHander(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (app *App) ConceptsHander(w http.ResponseWriter, r *http.Request) {
+	app.CorsAndPreflightHandler(w, r)
+	switch r.Method {
+	case http.MethodGet:
+		app.GetConcepts(w, r)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
 // AssetsHandler handles the /assets/ route
 func (app *App) AssetsHandler(w http.ResponseWriter, r *http.Request) {
 	app.CorsAndPreflightHandler(w, r)

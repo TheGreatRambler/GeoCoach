@@ -29,5 +29,12 @@ type Tip struct {
 }
 
 type ListEntityPhotos struct {
-	PanoramaID    string `json:""`
+	PanoramaID string `json:""`
+}
+
+type Concept struct {
+	gorm.Model
+	RoundID uint   `gorm:"type:integer;not null;foreignkey:RoundID"`
+	Concept string `gorm:"type:varchar(100);not null"`
+	UserID  string `gorm:"type:varchar(100);not null"`
 }
