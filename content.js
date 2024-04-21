@@ -150,6 +150,7 @@ function codeToLoad() {
 			dialog.style.backgroundColor = "rgba(16,16,28,0.6)";
 			dialog.style.backdropFilter = 'blur(15px)';
 
+
 			let dialogContent = document.createElement("div");
 			dialogContent.style.width = "70%";
 			dialogContent.style.height = "70%";
@@ -162,7 +163,6 @@ function codeToLoad() {
 			dialogContent.style.justifyContent = "center";
 			dialogContent.style.flexDirection = "column";
 
-
 			let dialogTitle = document.createElement("h1");
 			dialogTitle.innerHTML = "GeoCoach";
 			dialogTitle.style.color = "white";
@@ -171,6 +171,49 @@ function codeToLoad() {
 			dialogTitle.style.fontWeight = "700";
 			dialogTitle.style.fontFamily = "neo-sans,sans-serif";
 			dialogTitle.style.fontSize = "1.75rem";
+
+			dialogContent.appendChild(dialogTitle);
+
+			let tabsContainer = document.createElement("div");
+			tabsContainer.classList.add("tabs-container");
+			tabsContainer.style.display = "flex";
+			tabsContainer.style.justifyContent = "center";
+			tabsContainer.style.marginBottom = "10px";
+
+			let tabGraph = document.createElement("button");
+			tabGraph.innerHTML = "Stats";
+			tabGraph.classList.add("tab");
+			tabGraph.dataset.target = "graphContainer";
+			tabGraph.style.marginRight = "10px";
+			tabGraph.style.backgroundColor = "transparent";
+			tabGraph.style.color = "white";
+			tabGraph.style.border = "none";
+			tabGraph.style.fontSize = "1rem";
+			tabGraph.style.cursor = "pointer";
+			tabGraph.style.fontFamily = "neo-sans,sans-serif";
+			tabGraph.style.fontWeight = "700";
+			tabGraph.style.fontStyle = "italic";
+			tabGraph.style.borderRadius = "3.75rem";
+			tabGraph.style.padding = "0.75rem 1.5rem";
+
+			let tabNewView = document.createElement("button");
+			tabNewView.innerHTML = "Tips";
+			tabNewView.classList.add("tab");
+			tabNewView.dataset.target = "newViewContainer";
+			tabNewView.style.backgroundColor = "transparent";
+			tabNewView.style.color = "white";
+			tabNewView.style.border = "none";
+			tabNewView.style.fontSize = "1rem";
+			tabNewView.style.cursor = "pointer";
+			tabNewView.style.fontFamily = "neo-sans,sans-serif";
+			tabNewView.style.fontWeight = "700";
+			tabNewView.style.fontStyle = "italic";
+			tabNewView.style.borderRadius = "3.75rem";
+			tabNewView.style.padding = "0.75rem 1.5rem";
+
+			tabsContainer.appendChild(tabGraph);
+			tabsContainer.appendChild(tabNewView);
+			dialogContent.appendChild(tabsContainer);
 
 			let closeButton = document.createElement("button");
 			closeButton.innerHTML = "CLOSE";
@@ -321,7 +364,6 @@ function codeToLoad() {
 				dialog.close();
 			}
 
-			dialogContent.appendChild(dialogTitle);
 			dialogContent.appendChild(divChartContainer);
 			dialogContent.appendChild(divStats);
 			dialogContent.appendChild(dropDown);
@@ -333,6 +375,19 @@ function codeToLoad() {
 			let button = document.querySelector("div[class*='geocoach-item'] button");
 			button.onclick = function() {
 				dialog.showModal();
+			}
+
+			tabGraph.onclick = function() {
+				createChart();
+				divChartContainer.style.display = "flex";
+				divStats.style.display = "flex";
+				dropDown.style.display = "block";
+			}
+
+			tabNewView.onclick = function() {
+				divChartContainer.style.display = "none";
+				divStats.style.display = "none";
+				dropDown.style.display = "none";
 			}
 			
 		}
