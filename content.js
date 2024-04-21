@@ -390,15 +390,17 @@ function codeToLoad() {
 								})).json();
 
 								let pollIntervalHandle = setInterval(async () => {
-									let tipRes = await fetch(`http://localhost:8080/tips?round_id=${roundsRes.ID}`, {
+									fetch(`http://localhost:8080/tips?round_id=${roundsRes.ID}`, {
 										method: 'GET',
-									});
-
-									if(tipRes.status === 200) {
-										clearInterval(pollIntervalHandle);
-										let tipData          = await tipRes.json();
-										tipElement.innerHTML = tipData.TipString;
-									}
+									})
+										.then(async (tipRes) => {
+											if(tipRes.status === 200) {
+												clearInterval(pollIntervalHandle);
+												let tipData          = await tipRes.json();
+												tipElement.innerHTML = tipData.TipString;
+											}
+										})
+										.catch(() => {});
 								}, 1000);
 							}
 						}, 100);

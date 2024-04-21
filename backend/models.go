@@ -27,3 +27,7 @@ type Tip struct {
 	TipString string `gorm:"type:varchar(1000);not null"`
 	UserID    string `gorm:"type:varchar(100);not null"`
 }
+
+type ListEntityPhotos struct {
+	PanoramaID    string `json:""`
+}
