@@ -12,6 +12,7 @@ function codeToLoad() {
 	let avgSpan      = document.createElement("span");
 	let medianSpan   = document.createElement("span");
 	let modeSpan     = document.createElement("span");
+	let table;
 
 	let mainPageState = "none"
 
@@ -118,6 +119,102 @@ function codeToLoad() {
 
 			fetchStats(scores);
 		}, 0);
+	}
+
+	function addTableRow(location, guess, score, tip) {
+		let row = document.createElement("tr");
+		row.style.width = "100%";
+		row.style.display = "table-row";
+		row.style.alignItems = "center";
+		row.style.backgroundColor = "rgba(16,16,28,0.6)";
+		row.style.borderRadius = "10px";
+		row.style.padding = "10px";
+
+		let locationElement = document.createElement("td");
+		locationElement.innerHTML = location;
+		locationElement.style.color = "white";
+		locationElement.style.fontFamily = "neo-sans,sans-serif";
+		locationElement.style.fontWeight = "400";
+		locationElement.style.fontStyle = "italic";
+		locationElement.style.fontSize = "0.75rem";
+		locationElement.style.width = "20%";
+		locationElement.padding = "2%";
+		locationElement.style.textAlign = "center";
+		locationElement.style.display = "table-cell";
+
+		let guessElement = document.createElement("td");
+		guessElement.innerHTML = guess;
+		guessElement.style.color = "white";
+		guessElement.style.fontFamily = "neo-sans,sans-serif";
+		guessElement.style.fontWeight = "400";
+		guessElement.style.fontStyle = "italic";
+		guessElement.style.fontSize = "0.75rem";
+		guessElement.style.width = "20%";
+		guessElement.padding = "2%";
+		guessElement.style.textAlign = "center";
+		guessElement.style.display = "table-cell";
+
+		let scoreElement = document.createElement("td");
+		scoreElement.innerHTML = score;
+		scoreElement.style.color = "white";
+		scoreElement.style.fontFamily = "neo-sans,sans-serif";
+		scoreElement.style.fontWeight = "400";
+		scoreElement.style.fontStyle = "italic";
+		scoreElement.style.fontSize = "0.75rem";
+		scoreElement.style.width = "10%";	
+		scoreElement.padding = "2%";
+		scoreElement.style.textAlign = "center";
+		scoreElement.style.display = "table-cell";
+
+		let tipElement = document.createElement("td");
+		tipElement.innerHTML = tip;
+		tipElement.style.color = "white";
+		tipElement.style.fontFamily = "neo-sans,sans-serif";
+		tipElement.style.fontWeight = "400";
+		tipElement.style.fontStyle = "italic";
+		tipElement.style.fontSize = "0.75rem";
+		tipElement.style.width = "50%";
+		tipElement.padding = "10px";
+		tipElement.style.padding = "2%";
+		tipElement.style.textAlign = "center";
+		tipElement.style.display = "table-cell";
+
+		row.appendChild(locationElement);
+		row.appendChild(guessElement);
+		row.appendChild(scoreElement);
+		row.appendChild(tipElement);
+
+		table.appendChild(row);
+	}
+
+	const loadTips = async () => {
+		while (table.children.length > 1) {
+			table.removeChild(table.children[1]);
+		}
+
+		const userID = window.__NEXT_DATA__.props.accountProps.account.user.userId;
+
+		let tips = await fetch(`http://localhost:8080/tips?user_id=${userID}`, {
+			method: "GET"
+		});
+		tips = await tips.json();
+
+		console.log(tips);
+
+		let rounds = await fetch(`http://localhost:8080/rounds?user_id=${userID}`, {
+			method: "GET"
+		});
+		rounds = await rounds.json();
+
+		console.log(rounds);
+
+		tips.forEach(tip => {
+			let round = rounds.find(round => round.ID === tip.RoundID);
+			tip.Location = round.RoundAddress;
+			tip.Guess = round.GuessAddress;
+			tip.Score = round.Score;
+			addTableRow(tip.Location, tip.Guess, tip.Score, tip.TipString);
+		})
 	}
 
 	const onPageLoad = () => {
@@ -367,10 +464,84 @@ function codeToLoad() {
 			dialogContent.appendChild(divChartContainer);
 			dialogContent.appendChild(divStats);
 			dialogContent.appendChild(dropDown);
-			dialogContent.appendChild(closeButton);
 			dialog.appendChild(dialogContent);
 
 			document.body.appendChild(dialog);
+
+			table = document.createElement("table");
+			table.style.width = "100%";
+			table.style.height = "100%";
+			table.style.alignItems = "center";
+			table.style.tableLayout = "fixed";
+			table.style.borderCollapse = "collapse";
+			table.style.margin = "auto";
+			table.style.display = "none";
+			table.style.overflowY = "scroll";
+			
+			
+			let header = document.createElement("tr");
+			header.style.width = "100%";
+			header.style.height = "50px";
+			header.style.display = "table-row";
+			header.style.alignItems = "center";
+			header.style.backgroundColor = "rgba(16,16,28,0.6)";
+			header.style.borderRadius = "10px";
+			header.style.padding = "10px";
+
+			let headerTitle = document.createElement("th");
+			headerTitle.innerHTML = "Location";
+			headerTitle.style.color = "white";
+			headerTitle.style.fontFamily = "neo-sans,sans-serif";
+			headerTitle.style.fontWeight = "700";
+			headerTitle.style.fontStyle = "italic";
+			headerTitle.style.fontSize = "1rem";
+			headerTitle.style.width = "20%";
+			headerTitle.style.textAlign = "center";
+			headerTitle.style.boxSizing = "border-box";	
+
+			let headerGuess = document.createElement("th");
+			headerGuess.innerHTML = "Guess";
+			headerGuess.style.color = "white";
+			headerGuess.style.fontFamily = "neo-sans,sans-serif";
+			headerGuess.style.fontWeight = "700";
+			headerGuess.style.fontStyle = "italic";
+			headerGuess.style.fontSize = "1rem";
+			headerGuess.style.width = "20%";
+			headerGuess.style.textAlign = "center";
+			headerGuess.style.boxSizing = "border-box";
+
+			let headerScore = document.createElement("th");
+			headerScore.innerHTML = "Score";
+			headerScore.style.color = "white";
+			headerScore.style.fontFamily = "neo-sans,sans-serif";
+			headerScore.style.fontWeight = "700";
+			headerScore.style.fontStyle = "italic";
+			headerScore.style.fontSize = "1rem";
+			headerScore.style.width = "10%";
+			headerScore.style.textAlign = "center";
+			headerScore.style.boxSizing = "border-box";
+
+			let headerTip = document.createElement("th");
+			headerTip.innerHTML = "Tip";
+			headerTip.style.color = "white";
+			headerTip.style.fontFamily = "neo-sans,sans-serif";
+			headerTip.style.fontWeight = "700";
+			headerTip.style.fontStyle = "italic";
+			headerTip.style.fontSize = "1rem";
+			headerTip.style.width = "50%";
+			headerTip.style.textAlign = "center";
+			headerTip.style.boxSizing = "border-box";
+
+			header.appendChild(headerTitle);
+			header.appendChild(headerGuess);
+			header.appendChild(headerScore);
+			header.appendChild(headerTip);
+
+			table.appendChild(header);
+
+			dialogContent.appendChild(table);
+
+			dialogContent.appendChild(closeButton);
 
 			let button = document.querySelector("div[class*='geocoach-item'] button");
 			button.onclick = function() {
@@ -382,12 +553,15 @@ function codeToLoad() {
 				divChartContainer.style.display = "flex";
 				divStats.style.display = "flex";
 				dropDown.style.display = "block";
+				table.style.display = "none";
 			}
 
 			tabNewView.onclick = function() {
+				loadTips();
 				divChartContainer.style.display = "none";
 				divStats.style.display = "none";
 				dropDown.style.display = "none";
+				table.style.display = "block";
 			}
 			
 		}
