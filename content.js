@@ -422,94 +422,99 @@ function codeToLoad() {
 			window.origFetch(url, options).then(response => {
 				if(isGamesPost && usingGeocoach()) {
 					response.clone().json().then((roundsData) => {
-						setTimeout(async () => {
-							let resultsContainer = document.querySelector('div[class*="result-layout_bottom"]');
+						if(roundsData.player) {
+							setTimeout(async () => {
+								let resultsContainer = document.querySelector('div[class*="result-layout_bottom"]');
 
-							if(resultsContainer) {
-								resultsContainer.style.maxHeight = '310px';
-								resultsContainer.style.background
-									= 'linear-gradient(180deg,var(--ds-color-purple-100) 0%,var(--ds-color-black) 100%)';
+								if(resultsContainer) {
+									resultsContainer.style.maxHeight = '310px';
+									resultsContainer.style.background
+										= 'linear-gradient(180deg,var(--ds-color-purple-100) 0%,var(--ds-color-black) 100%)';
 
-								let container                  = document.createElement('div');
-								container.style.display        = 'flex';
-								container.style.justifyContent = 'flex-start';
-								container.style.flexDirection  = 'column';
+									let container                  = document.createElement('div');
+									container.style.display        = 'flex';
+									container.style.justifyContent = 'flex-start';
+									container.style.flexDirection  = 'column';
 
-								let coachContainer                  = document.createElement('div');
-								coachContainer.style.display        = 'flex';
-								coachContainer.style.justifyContent = 'flex-start';
-								coachContainer.style.flexDirection  = 'row';
+									let coachContainer                  = document.createElement('div');
+									coachContainer.style.display        = 'flex';
+									coachContainer.style.justifyContent = 'flex-start';
+									coachContainer.style.flexDirection  = 'row';
 
-								let img          = document.createElement('img');
-								img.src          = 'http://localhost:8080/assets/owlmouthclosed.png';
-								img.style.width  = '200px';
-								img.style.height = '200px';
+									let img          = document.createElement('img');
+									img.src          = 'http://localhost:8080/assets/owlmouthclosed.png';
+									img.style.width  = '200px';
+									img.style.height = '200px';
 
-								let tipElement               = document.createElement('h3');
-								tipElement.style.margin      = "auto";
-								tipElement.style.marginRight = "25px";
+									let tipElement               = document.createElement('h3');
+									tipElement.style.margin      = "auto";
+									tipElement.style.marginRight = "25px";
 
-								setInterval(() => {
-									if(img.src.endsWith('owlmouthnod.png')) {
-										img.src = 'http://localhost:8080/assets/owlmouthopen.png';
-									} else {
-										img.src = 'http://localhost:8080/assets/owlmouthnod.png';
-									}
-								}, 500);
+									setInterval(() => {
+										if(img.src.endsWith('owlmouthnod.png')) {
+											img.src = 'http://localhost:8080/assets/owlmouthopen.png';
+										} else {
+											img.src = 'http://localhost:8080/assets/owlmouthnod.png';
+										}
+									}, 500);
 
-								// resultsContainer.firstElementChild.remove();
-								resultsContainer.firstElementChild.style.background = '';
+									// resultsContainer.firstElementChild.remove();
+									resultsContainer.firstElementChild.style.background = '';
 
-								coachContainer.appendChild(img);
-								coachContainer.appendChild(tipElement);
-								container.appendChild(coachContainer);
-								container.appendChild(resultsContainer.firstElementChild);
+									coachContainer.appendChild(img);
+									coachContainer.appendChild(tipElement);
+									container.appendChild(coachContainer);
+									container.appendChild(resultsContainer.firstElementChild);
 
-								resultsContainer.appendChild(container);
+									resultsContainer.appendChild(container);
 
-								let currentGuess  = roundsData.player.guesses[roundsData.player.guesses.length - 1];
-								let currentActual = roundsData.rounds[roundsData.rounds.length - 1];
-								let currentActualPanoramaID = hexToAscii(currentActual.panoId);
+									let currentGuess  = roundsData.player.guesses[roundsData.player.guesses.length - 1];
+									let currentActual = roundsData.rounds[roundsData.rounds.length - 1];
+									let currentActualPanoramaID = hexToAscii(currentActual.panoId);
 
-								let guessReverseSearch
-									= await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${
-												 currentGuess.lat}&lon=${currentGuess.lng}`))
-										  .json();
-								let actualReverseSearch
-									= await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${
-												 currentActual.lat}&lon=${currentActual.lng}`))
-										  .json();
+									let guessReverseSearch = await (
+										await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${
+											currentGuess.lat}&lon=${
+											currentGuess.lng}`)).json();
+									let actualReverseSearch = await (
+										await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${
+											currentActual.lat}&lon=${
+											currentActual.lng}`)).json();
 
-								let roundsRes = await (await fetch('http://localhost:8080/rounds', {
-									body: JSON.stringify({
-										guessLat: currentGuess.lat,
-										guessLon: currentGuess.lng,
-										guessAddress: guessReverseSearch.display_name,
-										roundLat: currentActual.lat,
-										roundLon: currentActual.lon,
-										roundAddress: actualReverseSearch.display_name,
-										panoramaID: currentActualPanoramaID,
-										score: currentGuess.roundScoreInPoints,
-										userID: roundsData.player.id,
-									}),
-									method: 'POST',
-								})).json();
+									let roundsRes = await (await fetch('http://localhost:8080/rounds', {
+										body: JSON.stringify({
+											guessLat: currentGuess.lat,
+											guessLon: currentGuess.lng,
+											guessAddress: guessReverseSearch.display_name,
+											roundLat: currentActual.lat,
+											roundLon: currentActual.lon,
+											roundAddress: actualReverseSearch.display_name,
+											panoramaID: currentActualPanoramaID,
+											score: currentGuess.roundScoreInPoints,
+											userID: roundsData.player.id,
+										}),
+										method: 'POST',
+									})).json();
 
-								let pollIntervalHandle = setInterval(async () => {
-									fetch(`http://localhost:8080/tips?round_id=${roundsRes.ID}`, {
-										method: 'GET',
-									})
-										.then(async (tipRes) => {
-											if(tipRes.status === 200) {
-												clearInterval(pollIntervalHandle);
-												let tipData          = await tipRes.json();
-												tipElement.innerHTML = tipData.TipString;
-											}
+									let pollIntervalHandle = setInterval(async () => {
+										fetch(`http://localhost:8080/tips?round_id=${roundsRes.ID}`, {
+											method: 'GET',
 										})
-										.catch(() => {});
-								}, 1000);
-							}
-						}, 100);
+											.then(async (tipRes) => {
+												if(tipRes.status === 200) {
+													let tipData = await tipRes.json();
+
+													if(tipData.length > 0) {
+														clearInterval(pollIntervalHandle);
+														tipElement.innerHTML = tipData[0].TipString;
+													}
+												}
+											})
+											.catch(() => {});
+									}, 1000);
+								}
+							}, 100);
+						}
 					});
 				}
 
@@ -528,15 +533,13 @@ function codeLoad() {
 	lscript.id   = 'ChartJSScript';
 	container.insertBefore(lscript, container.children[0]);
 
-	lscript.onload = function() {
-		var script  = document.createElement('script');
-		script.type = 'text/javascript';
-		script.id   = 'GeoCoachScript';
-		var code    = 'const inline = 1;' + codeToLoad.toString() + 'codeToLoad();';
-		script.appendChild(document.createTextNode(code));
+	var script  = document.createElement('script');
+	script.type = 'text/javascript';
+	script.id   = 'GeoCoachScript';
+	var code    = 'const inline = 1;' + codeToLoad.toString() + 'codeToLoad();';
+	script.appendChild(document.createTextNode(code));
 
-		container.insertBefore(script, container.children[0]);
-	}
+	container.insertBefore(script, container.children[0]);
 }
 
 codeLoad();
