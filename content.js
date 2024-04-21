@@ -52,6 +52,11 @@ function codeToLoad() {
 		const scores = rev_scores.reverse();
 
 		const ctx = document.getElementById('scoreChart');
+
+		console.log(scores);
+		console.log(dropDown.value);
+		console.log(ctx);
+
 		if (myChart) {
 			myChart.destroy();
 		}
@@ -239,14 +244,23 @@ function codeToLoad() {
 			let option5 = document.createElement("option");
 			option5.value = "-1";
 			option5.innerHTML = "All";
-			// default
-			option5.selected = true;
+
+			let selectAValue = document.createElement("option");
+			selectAValue.value = "5";
+			selectAValue.innerHTML = "SELECT A VALUE";
+			selectAValue.disabled = true;
+			selectAValue.selected = true;
+
+			if (dropDown.children.length > 0) {
+				dropDown.innerHTML = "";
+			}
 
 			dropDown.appendChild(option1);
 			dropDown.appendChild(option2);
 			dropDown.appendChild(option3);
 			dropDown.appendChild(option4);
 			dropDown.appendChild(option5);
+			dropDown.appendChild(selectAValue);
 
 			dropDown.onchange = function() {
 				createChart();
@@ -271,7 +285,7 @@ function codeToLoad() {
 			let button = document.querySelector("div[class*='geocoach-item'] button");
 			button.onclick = function() {
 				dialog.showModal();
-				createChart();			  
+				// createChart();
 			}
 			
 		}
@@ -410,13 +424,15 @@ function codeLoad() {
 	lscript.id = 'ChartJSScript';
 	container.insertBefore(lscript, container.children[0]);
 
-	var script  = document.createElement('script');
-	script.type = 'text/javascript';
-	script.id   = 'GeoCoachScript';
-	var code    = 'const inline = 1;' + codeToLoad.toString() + 'codeToLoad();';
-	script.appendChild(document.createTextNode(code));
-
-	container.insertBefore(script, container.children[0]);
+	lscript.onload = function() {
+		var script  = document.createElement('script');
+		script.type = 'text/javascript';
+		script.id   = 'GeoCoachScript';
+		var code    = 'const inline = 1;' + codeToLoad.toString() + 'codeToLoad();';
+		script.appendChild(document.createTextNode(code));
+	
+		container.insertBefore(script, container.children[0]);
+	}
 }
 
 codeLoad();
