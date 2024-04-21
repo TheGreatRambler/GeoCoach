@@ -8,6 +8,7 @@ function codeToLoad() {
 
 	window.origFetch = window.fetch;
 	let myChart      = null;
+	let conceptChart = null;
 	let dropDown     = document.createElement("select");
 	let avgSpan      = document.createElement("span");
 	let medianSpan   = document.createElement("span");
@@ -115,70 +116,150 @@ function codeToLoad() {
 						tension: 0.1,
 					}]
 				},
-				options: { scales: { y: { beginAtZero: true } } }
+				options: {
+					plugins: { legend: { labels: { color: "white", font: { size: 18 } } } },
+					scales: {
+						y: {
+							ticks: {
+								color: "white",
+								font: {
+									size: 18,
+								},
+								stepSize: 1,
+								beginAtZero: true
+							}
+						},
+						x: { ticks: { color: "white", font: { size: 14 }, stepSize: 1, beginAtZero: true } }
+					}
+				}
 			});
 
 			fetchStats(scores);
 		}, 0);
 	}
 
-	function addTableRow(location, guess, score, tip) {
-		let row = document.createElement("tr");
-		row.style.width = "100%";
-		row.style.display = "table-row";
-		row.style.alignItems = "center";
-		row.style.backgroundColor = "rgba(16,16,28,0.6)";
-		row.style.borderRadius = "10px";
-		row.style.padding = "10px";
+	async function createConceptHistogram() {
+		const response    = await window.origFetch('http://localhost:8080/concepts');
+		const conceptsRaw = await response.json();
+		const concepts    = conceptsRaw.map(concept => concept.Concept);
 
-		let locationElement = document.createElement("td");
-		locationElement.innerHTML = location;
-		locationElement.style.color = "white";
+		setTimeout(() => {
+			const canvas = document.getElementById('conceptsCanvas');
+
+			let conceptsBins = {};
+			concepts.forEach((concept) => {
+				if(!conceptsBins[concept]) {
+					conceptsBins[concept] = 1;
+				} else {
+					conceptsBins[concept]++;
+				}
+			});
+
+			let x = [];
+			let y = [];
+			for(const [key, value] of Object.entries(conceptsBins)) {
+				x.push(key);
+				y.push(value);
+			}
+
+			if(!canvas) {
+				console.log("Has to enter");
+				setTimeout(createConceptHistogram, 50);
+				return
+			}
+
+			const ctx = canvas.getContext('2d');
+
+			ctx.canvas.width  = 600;
+			ctx.canvas.height = 400;
+
+			if(conceptChart) {
+				conceptChart.destroy();
+			}
+
+			conceptChart = new Chart(canvas, {
+				type: 'bar',
+				data: {
+					labels: x,
+					datasets: [{ label: "Concepts You Have Missed", data: y, borderWidth: 1 }],
+				},
+				options: {
+					plugins: { legend: { labels: { color: "white", font: { size: 18 } } } },
+					scales: {
+						y: {
+							ticks: {
+								color: "white",
+								font: {
+									size: 18,
+								},
+								stepSize: 1,
+								beginAtZero: true
+							}
+						},
+						x: { ticks: { color: "white", font: { size: 14 }, autoSkip: false, beginAtZero: true } }
+					}
+				}
+			});
+		}, 0);
+	}
+
+	function addTableRow(location, guess, score, tip) {
+		let row                   = document.createElement("tr");
+		row.style.width           = "100%";
+		row.style.display         = "table-row";
+		row.style.alignItems      = "center";
+		row.style.backgroundColor = "rgba(16,16,28,0.6)";
+		row.style.borderRadius    = "10px";
+		row.style.padding         = "10px";
+
+		let locationElement              = document.createElement("td");
+		locationElement.innerHTML        = location;
+		locationElement.style.color      = "white";
 		locationElement.style.fontFamily = "neo-sans,sans-serif";
 		locationElement.style.fontWeight = "400";
-		locationElement.style.fontStyle = "italic";
-		locationElement.style.fontSize = "0.75rem";
-		locationElement.style.width = "20%";
-		locationElement.padding = "2%";
-		locationElement.style.textAlign = "center";
-		locationElement.style.display = "table-cell";
+		locationElement.style.fontStyle  = "italic";
+		locationElement.style.fontSize   = "0.75rem";
+		locationElement.style.width      = "20%";
+		locationElement.padding          = "2%";
+		locationElement.style.textAlign  = "center";
+		locationElement.style.display    = "table-cell";
 
-		let guessElement = document.createElement("td");
-		guessElement.innerHTML = guess;
-		guessElement.style.color = "white";
+		let guessElement              = document.createElement("td");
+		guessElement.innerHTML        = guess;
+		guessElement.style.color      = "white";
 		guessElement.style.fontFamily = "neo-sans,sans-serif";
 		guessElement.style.fontWeight = "400";
-		guessElement.style.fontStyle = "italic";
-		guessElement.style.fontSize = "0.75rem";
-		guessElement.style.width = "20%";
-		guessElement.padding = "2%";
-		guessElement.style.textAlign = "center";
-		guessElement.style.display = "table-cell";
+		guessElement.style.fontStyle  = "italic";
+		guessElement.style.fontSize   = "0.75rem";
+		guessElement.style.width      = "20%";
+		guessElement.padding          = "2%";
+		guessElement.style.textAlign  = "center";
+		guessElement.style.display    = "table-cell";
 
-		let scoreElement = document.createElement("td");
-		scoreElement.innerHTML = score;
-		scoreElement.style.color = "white";
+		let scoreElement              = document.createElement("td");
+		scoreElement.innerHTML        = score;
+		scoreElement.style.color      = "white";
 		scoreElement.style.fontFamily = "neo-sans,sans-serif";
 		scoreElement.style.fontWeight = "400";
-		scoreElement.style.fontStyle = "italic";
-		scoreElement.style.fontSize = "0.75rem";
-		scoreElement.style.width = "10%";	
-		scoreElement.padding = "2%";
-		scoreElement.style.textAlign = "center";
-		scoreElement.style.display = "table-cell";
+		scoreElement.style.fontStyle  = "italic";
+		scoreElement.style.fontSize   = "0.75rem";
+		scoreElement.style.width      = "10%";
+		scoreElement.padding          = "2%";
+		scoreElement.style.textAlign  = "center";
+		scoreElement.style.display    = "table-cell";
 
-		let tipElement = document.createElement("td");
-		tipElement.innerHTML = tip;
-		tipElement.style.color = "white";
+		let tipElement              = document.createElement("td");
+		tipElement.innerHTML        = tip;
+		tipElement.style.color      = "white";
 		tipElement.style.fontFamily = "neo-sans,sans-serif";
 		tipElement.style.fontWeight = "400";
-		tipElement.style.fontStyle = "italic";
-		tipElement.style.fontSize = "0.75rem";
-		tipElement.style.width = "50%";
-		tipElement.padding = "10px";
-		tipElement.style.padding = "2%";
-		tipElement.style.textAlign = "center";
-		tipElement.style.display = "table-cell";
+		tipElement.style.fontStyle  = "italic";
+		tipElement.style.fontSize   = "0.75rem";
+		tipElement.style.width      = "50%";
+		tipElement.padding          = "10px";
+		tipElement.style.padding    = "2%";
+		tipElement.style.textAlign  = "center";
+		tipElement.style.display    = "table-cell";
 
 		row.appendChild(locationElement);
 		row.appendChild(guessElement);
@@ -206,8 +287,6 @@ function codeToLoad() {
 			method: "GET"
 		});
 		rounds = await rounds.json();
-
-		console.log(rounds);
 
 		tips.forEach(tip => {
 			let round = rounds.find(round => round.ID === tip.RoundID);
@@ -309,8 +388,24 @@ function codeToLoad() {
 			tabNewView.style.borderRadius = "3.75rem";
 			tabNewView.style.padding = "0.75rem 1.5rem";
 
+			let tabConcepts = document.createElement("button");
+			tabConcepts.innerHTML = "Concepts";
+			tabConcepts.classList.add("tab");
+			tabConcepts.dataset.target = "newViewContainer";
+			tabConcepts.style.backgroundColor = "transparent";
+			tabConcepts.style.color = "white";
+			tabConcepts.style.border = "none";
+			tabConcepts.style.fontSize = "1rem";
+			tabConcepts.style.cursor = "pointer";
+			tabConcepts.style.fontFamily = "neo-sans,sans-serif";
+			tabConcepts.style.fontWeight = "700";
+			tabConcepts.style.fontStyle = "italic";
+			tabConcepts.style.borderRadius = "3.75rem";
+			tabConcepts.style.padding = "0.75rem 1.5rem";
+
 			tabsContainer.appendChild(tabGraph);
 			tabsContainer.appendChild(tabNewView);
+			tabsContainer.appendChild(tabConcepts);
 			dialogContent.appendChild(tabsContainer);
 
 			let closeButton = document.createElement("button");
@@ -329,6 +424,7 @@ function codeToLoad() {
 			closeButton.style.bottom = "0";
 			closeButton.style.marginLeft = "auto";
 			closeButton.style.marginRight = "auto";
+			closeButton.style.marginTop = "10px";
 
 			let divChartContainer = document.createElement("div");
 			divChartContainer.style.width = "100%";
@@ -350,8 +446,30 @@ function codeToLoad() {
 
 			divChartContainer.appendChild(canvas);
 
+			let conceptsChartContainer = document.createElement("div");
+			conceptsChartContainer.style.width = "100%";
+			conceptsChartContainer.style.height = "80%";
+			conceptsChartContainer.style.display = "none";
+			conceptsChartContainer.style.flexDirection = "column";
+			conceptsChartContainer.style.justifyContent = "center";
+			conceptsChartContainer.style.alignItems = "center";
+
+			let conceptsCanvas = document.createElement("canvas");
+			conceptsCanvas.id = "conceptsCanvas";
+			conceptsCanvas.width = 600;
+			conceptsCanvas.height = 400;
+			conceptsCanvas.style.maxWidth = "100%";
+			conceptsCanvas.style.height = "auto"; // Maintain aspect ratio
+			conceptsCanvas.style.display = "block"; // To block scale the width
+			conceptsCanvas.style.boxSizing = "border-box"; // Include padding and borders in the element's total width and height
+			conceptsCanvas.style.border = "1px solid white";
+
+			conceptsChartContainer.appendChild(conceptsCanvas);
+			dialogContent.appendChild(conceptsChartContainer);
+
 			// Create early
 			createChart();
+			createConceptHistogram();
 
 			let avgLabel = document.createElement("label");
 			avgLabel.innerHTML = "Average: ";
@@ -414,7 +532,6 @@ function codeToLoad() {
 			dropDown.style.width = "100%";
 			dropDown.style.height = "50px";
 			dropDown.style.marginTop = "10px";
-			dropDown.style.marginBottom = "10px";
 			dropDown.style.backgroundColor = "transparent";
 			dropDown.style.color = "white";
 			dropDown.style.border = "1px solid white";
@@ -555,6 +672,7 @@ function codeToLoad() {
 				divStats.style.display = "flex";
 				dropDown.style.display = "block";
 				table.style.display = "none";
+				conceptsChartContainer.style.display = "none";
 			}
 
 			tabNewView.onclick = function() {
@@ -563,8 +681,17 @@ function codeToLoad() {
 				divStats.style.display = "none";
 				dropDown.style.display = "none";
 				table.style.display = "block";
+				conceptsChartContainer.style.display = "none";
 			}
 			
+			tabConcepts.onclick = function() {
+				createConceptHistogram();
+				divChartContainer.style.display = "none";
+				divStats.style.display = "none";
+				dropDown.style.display = "none";
+				table.style.display = "none";
+				conceptsChartContainer.style.display = "flex";
+			}
 		}
 	}
 
