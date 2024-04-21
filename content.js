@@ -56,7 +56,8 @@ function codeToLoad() {
 	}
 
 	async function fetchData() {
-		const response = await window.origFetch('http://localhost:8080/rounds');
+		const userID = window.__NEXT_DATA__.props.accountProps.account.user.userId;
+		const response = await window.origFetch(`http://localhost:8080/rounds?user_id=${userID}`, { method: 'GET' });
 		const rounds   = await response.json();
 		return rounds.map(round => round.Score);
 	}
