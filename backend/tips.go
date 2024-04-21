@@ -26,6 +26,12 @@ import (
 //go:embed tip_prompt.txt
 var prompt_text_format string
 
+//go:embed guess_image_prompt.txt
+var guess_image_prompt string
+
+//go:embed actual_image_prompt.txt
+var actual_image_prompt string
+
 func IntPow(n, m int) int {
 	if m == 0 {
 		return 1
@@ -200,17 +206,28 @@ func (app *App) GenerateTip(roundID uint) {
 	guess_address := round.GuessAddress
 	actual_address := round.RoundAddress
 
-	DownloadPanoramaFromLocation(round.GuessLat, round.GuessLon)
-
-	// Actual location panorama
-	panoramaBuf, err := DownloadPanorama(round.PanoramaID)
+	// Guess location panorama
+	guessPanoramaBuf, err := DownloadPanoramaFromLocation(round.GuessLat, round.GuessLon)
 	if err != nil {
 		log.Fatalf("genai.NewClient: %v", err)
 		return
 	}
 
-	filename := strings.ToLower(strings.ReplaceAll(base64.StdEncoding.EncodeToString([]byte(round.PanoramaID)), "=", ""))
-	file, err := client.UploadFile(ctx, filename, bufio.NewReader(panoramaBuf), &genai.UploadFileOptions{DisplayName: "Equirectangular panorama of actual location"})
+	guessFilename := strings.ToLower(strings.ReplaceAll(base64.StdEncoding.EncodeToString([]byte(round.PanoramaID)), "=", ""))
+	guessFile, err := client.UploadFile(ctx, guessFilename, bufio.NewReader(guessPanoramaBuf), &genai.UploadFileOptions{DisplayName: "Equirectangular panorama of guess location"})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Actual location panorama
+	actualPanoramaBuf, err := DownloadPanorama(round.PanoramaID)
+	if err != nil {
+		log.Fatalf("genai.NewClient: %v", err)
+		return
+	}
+
+	actualFilename := strings.ToLower(strings.ReplaceAll(base64.StdEncoding.EncodeToString([]byte(round.PanoramaID)), "=", ""))
+	actualFile, err := client.UploadFile(ctx, actualFilename, bufio.NewReader(actualPanoramaBuf), &genai.UploadFileOptions{DisplayName: "Equirectangular panorama of actual location"})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -218,9 +235,15 @@ func (app *App) GenerateTip(roundID uint) {
 	prompt_text := fmt.Sprintf(prompt_text_format, guess_address, actual_address)
 
 	prompt = append(prompt, genai.Text(prompt_text))
+	prompt = append(prompt, genai.Text(guess_image_prompt))
 	prompt = append(prompt, genai.FileData{
 		MIMEType: "image/jpeg",
-		URI:      file.URI,
+		URI:      guessFile.URI,
+	})
+	prompt = append(prompt, genai.Text(actual_image_prompt))
+	prompt = append(prompt, genai.FileData{
+		MIMEType: "image/jpeg",
+		URI:      actualFile.URI,
 	})
 
 	output, err := model.GenerateContent(ctx, prompt...)

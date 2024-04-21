@@ -47,6 +47,4 @@ You got the language correct. Try looking for locations with rivers since the tr
 
 Keep in mind this is not an exhaustive list and each of the examples provided could have many more detailed reasons.
 
-Also keep in mind the guess can be made with only things I can see in the provided image, so large details such as country shape or distance between cities is not good reccomendations.
-
 If the information you know about the countries is too similar and provides no distinguishing characteristics, say between the UK and New Zealand, please tell the player the locations are very similar and hard to differentiate. Reccomend them to look for things specific to that country or a flag. 
