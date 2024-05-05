@@ -10,22 +10,31 @@ This app is self-hosted. Since the extension integrates directly with the GeoGue
 
 ## Install
 1. Start backend
+
 Create a `.env` file in `backend` with the following format and run `go run .`:
 ```
 GEMINI_API_KEY=
 ```
+
 2. Start extension
+
 Install the extension from the `manifest.json`. On Firefox this can be done at `about:debugging#/runtime/this-firefox`.
+
 3. Open [GeoGuessr](https://www.geoguessr.com)
 
 ## Features
+
 ### Tippy, the helpful tip-giving mascot
 ![](./images/senegal.gif)
+
 ### Interface
 ![](./images/interface.png)
+
 ### Concepts you missed
 ![](./images/concepts.png)
+
 ### Past tips
 ![](./images/tips.png)
+
 ### Past round scores
 ![](./images/scores.png)
